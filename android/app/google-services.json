@@ -1,0 +1,76 @@
+{
+  "project_info": {
+    "project_number": "958659977974",
+    "project_id": "pet-app-second-project",
+    "storage_bucket": "pet-app-second-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:958659977974:android:8720e99118784b0ef642d7",
+        "android_client_info": {
+          "package_name": "com.example.petspot_admin_side"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "958659977974-tegofstj9s3sfl982rdrounkcd5e5ch6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0yL5JpBv443ej9_T-IJvlLHZ1J75hucA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "958659977974-tegofstj9s3sfl982rdrounkcd5e5ch6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:958659977974:android:319b81bdbeda6413f642d7",
+        "android_client_info": {
+          "package_name": "com.example.second_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "958659977974-h1gfuro7d16mskt42ervpnuved94mfae.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.second_project",
+            "certificate_hash": "b3bd84abeccd4c188c71362ca3ac2a8dc8493331"
+          }
+        },
+        {
+          "client_id": "958659977974-tegofstj9s3sfl982rdrounkcd5e5ch6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0yL5JpBv443ej9_T-IJvlLHZ1J75hucA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "958659977974-tegofstj9s3sfl982rdrounkcd5e5ch6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
