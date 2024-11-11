@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:petspot_admin_side/infrastructure/category_model.dart';
+import 'package:petspot_admin_side/infrastructure/pet_category_model.dart';
 
 class CategoryRepository{
   final FirebaseFirestore _firestore=FirebaseFirestore.instance;

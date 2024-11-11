@@ -9,7 +9,7 @@ Category({
   required this.id,
   required this.name,
   required this.description,
-   this.image
+  this.image
   
 
 });

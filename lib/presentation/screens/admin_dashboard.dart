@@ -22,13 +22,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
     'Revenue',
   ];
 
+   
+
   String selectedView = 'Today';
 
   // Sample data for different views
   List<FlSpot> getChartData() {
     switch (selectedView) {
       case 'Weekly':
-        return [
+        return const [
           FlSpot(0, 2),
           FlSpot(1, 3),
           FlSpot(2, 5),
@@ -38,7 +40,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           FlSpot(6, 5),
         ];
       case 'Monthly':
-        return [
+        return const [
           FlSpot(0, 3),
           FlSpot(5, 4),
           FlSpot(10, 5),
@@ -49,7 +51,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
         ];
       case 'Today':
       default:
-        return [
+        return const [
           FlSpot(0, 4),
           FlSpot(1, 3),
           FlSpot(2, 5),
@@ -63,14 +65,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard'),
+        title:const Text('Dashboard',
+        style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
       ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
+         const   DrawerHeader(
               decoration: BoxDecoration(color: Colors.teal),
               child: Text(
                 'Admin menu',
@@ -78,46 +82,46 @@ class _AdminDashboardState extends State<AdminDashboard> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.dashboard),
+              leading:const Icon(Icons.dashboard),
               title: const Text('Dashboard'),
               onTap: () {},
             ),
             ListTile(
-              leading: Icon(Icons.person),
+              leading:const Icon(Icons.person),
               title: const Text('User Management'),
               onTap: () {},
             ),
              ListTile(
-              leading: Icon(Icons.person),
+              leading:const Icon(Icons.person),
               title: const Text('Category List'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>CategoryList()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>const CategoryList()));
               },
             ),
             ListTile(
-              leading: Icon(Icons.chat_rounded),
+              leading:const Icon(Icons.chat_rounded),
               title: const Text('Sales Report'),
               onTap: () {},
             ),
             ListTile(
-              leading: Icon(Icons.shop),
+              leading:const Icon(Icons.shop),
               title: const Text('Product Management'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddProduct()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddProduct()));
               },
             ),
             ListTile(
-              leading: Icon(Icons.category),
+              leading:const Icon(Icons.category),
               title: const Text('Category Management'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddCategory()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddCategory()));
               },
             ),
             // ListTile(
             //   leading: Icon(Icons.category),
             //   title: const Text('product list'),
             //   onTap: () {
-            //     Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPetDetail(product: product)));
+            //           Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPetDetail(product:product)));
             //   },
             // ),
             
@@ -125,16 +129,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding:const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
+          const  Text(
               'Revenue Overview',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             
-            SizedBox(height: 16),
+          const  SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -143,13 +147,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 _buildViewButton('Monthly'),
               ],
             ),
-            SizedBox(height: 16),
+        const    SizedBox(height: 16),
             SizedBox(
               height: 200,
               child: LineChart(
                 LineChartData(
-                  gridData: FlGridData(show: true),
-                  titlesData: FlTitlesData(show: true),
+                  gridData:const FlGridData(show: true),
+                  titlesData:const FlTitlesData(show: true),
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(color: Colors.black, width: 1),
@@ -173,10 +177,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+         const   SizedBox(height: 16),
             Expanded(
               child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 16,
                   crossAxisSpacing: 16,
@@ -197,9 +201,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
   // Button widget for selecting view
   Widget _buildViewButton(String view) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8),
+      padding:const EdgeInsets.symmetric(horizontal: 8),
       child: ElevatedButton(
         onPressed: () {
+        
           setState(() {
             selectedView = view;
           });
@@ -224,11 +229,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
         borderRadius: BorderRadius.circular(9),
       ),
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding:const EdgeInsets.all(16.0),
         child: Center(
           child: Text(
             cardTitles[index],
-            style: TextStyle(fontSize: 18),
+            style:const TextStyle(fontSize: 18),
           ),
         ),
       ),

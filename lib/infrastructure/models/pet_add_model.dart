@@ -10,6 +10,7 @@ class petProductModel{
   final String breed;
   final int stock;
   final String?imageUrl;
+  
 
   petProductModel({
     required this.id,
@@ -21,7 +22,7 @@ class petProductModel{
     required this.breed,
     required this.stock,
     this.imageUrl
-
+    
 
   });
 

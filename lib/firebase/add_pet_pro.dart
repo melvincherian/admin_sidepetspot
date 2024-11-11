@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, unnecessary_cast
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:petspot_admin_side/infrastructure/models/pet_add_model.dart';
 

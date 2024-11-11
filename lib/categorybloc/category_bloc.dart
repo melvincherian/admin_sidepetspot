@@ -2,10 +2,8 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:petspot_admin_side/bloc/category_bloc.dart';
 import 'package:petspot_admin_side/firebase/category.dart';
-import 'package:petspot_admin_side/infrastructure/pet_category_model.dart';
-
-part 'category_event.dart';
 part 'category_state.dart';
 
 // category_bloc.dart

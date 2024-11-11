@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:petspot_admin_side/infrastructure/category_model.dart';
+import 'package:petspot_admin_side/infrastructure/pet_category_model.dart';
 import 'package:petspot_admin_side/presentation/screens/edit_category.dart';
 
 class CategoryList extends StatelessWidget {
@@ -47,29 +47,32 @@ class CategoryList extends StatelessWidget {
               final category = categories[index];
 
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Card(
                   elevation: 5,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                    leading: category.image != null && category.image!.isNotEmpty
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Image.network(
-                              category.image!,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : const Icon(
-                            Icons.image,
-                            size: 50,
-                            color: Colors.grey,
-                          ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 16.0),
+                    leading:
+                        category.image != null && category.image!.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: Image.network(
+                                  category.image!,
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : const Icon(
+                                Icons.image,
+                                size: 50,
+                                color: Colors.grey,
+                              ),
                     title: Text(
                       category.name,
                       style: const TextStyle(
@@ -90,31 +93,38 @@ class CategoryList extends StatelessWidget {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(onPressed: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>EditCategory(category: category)));
-                        }, icon:const Icon(Icons.edit,color: Colors.blue,)
-                        ),
-                        IconButton(onPressed: ()async{
-                          
-                          FirebaseFirestore.instance
-                            .collection('categories')
-                            .doc(category.id)
-                            .delete();
-                        }, icon:const Icon(Icons.delete,color: Colors.red,))
+                        IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          EditCategory(category: category)));
+                            },
+                            icon: const Icon(
+                              Icons.edit,
+                              color: Colors.blue,
+                            )),
+                        IconButton(
+                            onPressed: () async {
+                              FirebaseFirestore.instance
+                                  .collection('categories')
+                                  .doc(category.id)
+                                  .delete();
+                            },
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ))
                       ],
                     ),
-                    
                   ),
                 ),
               );
             },
           );
-         
-          
         },
-        
       ),
     );
   }
 }
-

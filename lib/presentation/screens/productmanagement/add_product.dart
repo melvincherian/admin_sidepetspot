@@ -137,6 +137,9 @@ class _AddProductState extends State<AddProduct> {
       ),
     );
   }
+
+  
+  
   
 
   Widget _buildTextField(

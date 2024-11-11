@@ -121,7 +121,7 @@ class _AdminLoginState extends State<AdminLogin> {
               )));
         } else {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) =>  AdminDashboard()));
+              MaterialPageRoute(builder: (context) => AdminDashboard()));
         }
       });
     });
