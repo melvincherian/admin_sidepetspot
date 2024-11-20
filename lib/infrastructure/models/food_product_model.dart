@@ -7,6 +7,8 @@ class FoodProductModel {
   final int stock;
   final String?image;
   final String foodweight;
+  final String packedDate;
+  final String endDate;
 
   FoodProductModel({
     required this.id,
@@ -16,7 +18,10 @@ class FoodProductModel {
     required this.price,
     required this.stock,
     required this.foodweight,
-    this.image
+     this.image,
+    required this.packedDate,
+    required this.endDate
+
   });
 
   factory FoodProductModel.fromJson(Map<String,dynamic>json){
@@ -28,6 +33,8 @@ class FoodProductModel {
       price: json['price'], 
       stock: json['stock'], 
       foodweight: json['foodweight'],
+      packedDate: json['packedDate'],
+      endDate: json['endDate']
       
       );
   }
@@ -40,7 +47,9 @@ class FoodProductModel {
       'description':description,
       'price':price,
       'stock':stock,
-      'foodweight':foodweight
+      'foodweight':foodweight,
+      'packedDate':packedDate,
+      'endDate':endDate
     };
 
   }

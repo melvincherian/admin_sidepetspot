@@ -7,9 +7,7 @@ final class AddpetproductInitial extends AddpetproductState {}
 
 final class ProductLoading extends AddpetproductState{}
 
-final class AddpetproductSuccess extends AddpetproductState {
-  
-}
+final class AddpetproductSuccess extends AddpetproductState {}
 
 final class ProductLoaded extends AddpetproductState{
 

@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:petspot_admin_side/presentation/screens/add_category.dart';
-import 'package:petspot_admin_side/presentation/screens/category_list.dart';
-import 'package:petspot_admin_side/presentation/screens/productmanagement/add_product.dart';
+import 'package:petspot_admin_side/presentation/screens/category_view.dart';
+import 'package:petspot_admin_side/presentation/screens/details/user_list.dart';
+import 'package:petspot_admin_side/presentation/screens/productmanagement/product_view.dart';
 // import 'package:petspot_admin_side/presentation/screens/category_management.dart';
 
 class AdminDashboard extends StatefulWidget {
@@ -15,6 +15,8 @@ class AdminDashboard extends StatefulWidget {
 }
 
 class _AdminDashboardState extends State<AdminDashboard> {
+
+
   final List<String> cardTitles = [
     'Total Products',
     'Total Orders',
@@ -89,15 +91,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ListTile(
               leading:const Icon(Icons.person),
               title: const Text('User Management'),
-              onTap: () {},
-            ),
-             ListTile(
-              leading:const Icon(Icons.person),
-              title: const Text('Category List'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const CategoryList()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>UserList()));
               },
             ),
+            
             ListTile(
               leading:const Icon(Icons.chat_rounded),
               title: const Text('Sales Report'),
@@ -107,23 +105,17 @@ class _AdminDashboardState extends State<AdminDashboard> {
               leading:const Icon(Icons.shop),
               title: const Text('Product Management'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddProduct()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>const ProductView()));
               },
             ),
             ListTile(
               leading:const Icon(Icons.category),
               title: const Text('Category Management'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddCategory()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>const CategoryView()));
               },
             ),
-            // ListTile(
-            //   leading: Icon(Icons.category),
-            //   title: const Text('product list'),
-            //   onTap: () {
-            //           Navigator.push(context, MaterialPageRoute(builder: (context)=>AddPetDetail(product:product)));
-            //   },
-            // ),
+          
             
           ],
         ),

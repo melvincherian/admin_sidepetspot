@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:petspot_admin_side/bloc/addpetproduct_bloc.dart';
 import 'package:petspot_admin_side/bloc/imagepicker_bloc.dart';
 import 'package:petspot_admin_side/infrastructure/models/pet_add_model.dart';
+import 'package:petspot_admin_side/presentation/widgets/pet_add_widget.dart';
+
 
 class AddProduct extends StatefulWidget {
   const AddProduct({super.key});
@@ -40,6 +42,15 @@ class _AddProductState extends State<AddProduct> {
                 backgroundColor: Colors.green,
                 content: Text('Product added successfully')),
             );
+          
+             categoryController.clear();
+             priceController.clear();
+             descriptionController.clear();
+             weightController.clear();
+             colorController.clear();
+             breedController.clear();
+             stockController.clear();
+
           } else if (state is ProductError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Failed to add product: ${state.errormessage}')),
@@ -78,31 +89,32 @@ class _AddProductState extends State<AddProduct> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                _buildTextField(categoryController, 'Category', 'Please Enter Category'),
-                _buildTextField(priceController, 'Price', 'Please Enter Price', keyboardType: TextInputType.number),
-                _buildTextField(descriptionController, 'Description', 'Please Enter Description'),
-                _buildTextField(weightController, 'Weight', 'Please Enter Weight'),
-                _buildTextField(colorController, 'Color', 'Please Enter Color'),
-                DropdownButtonFormField<String>(
-                  value: "In Stock",
-                  decoration: const InputDecoration(
-                    labelText: 'Availability Status',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: ['In Stock', 'Out of Stock'].map((status) {
-                    return DropdownMenuItem(
-                      value: status,
-                      child: Text(status),
-                    );
-                  }).toList(),
-                  onChanged: (value) {},
-                ),
+                CustomTextField(controller: categoryController, label: 'category', validationMessage: 'Please Enter Category'),
+                CustomTextField(controller: priceController, label: 'price', validationMessage: 'Please Eneter Price',keyboardType: TextInputType.number),
+                CustomTextField(controller: descriptionController, label: 'Description', validationMessage: 'Please Enter Description'),
+                CustomTextField(controller: weightController, label: 'Weight', validationMessage: 'Please Enter Weight'),
+                CustomTextField(controller: colorController, label: 'Color', validationMessage: 'Please Enter the color of the pet'),
+                // DropdownButtonFormField<String>(
+                //   value: "In Stock",
+                //   decoration: const InputDecoration(
+                //     labelText: 'Availability Status',
+                //     border: OutlineInputBorder(),
+                //   ),
+                //   items: ['In Stock', 'Out of Stock'].map((status) {
+                //     return DropdownMenuItem(
+                //       value: status,
+                //       child: Text(status),
+                //     );
+                //   }).toList(),
+                //   onChanged: (value) {},
+                // ),
                 const SizedBox(height: 15),
-                _buildTextField(breedController, 'Breed', 'Please Enter Compatible Breeds'),
-                _buildTextField(stockController, 'Stock', 'Please Enter Stock', keyboardType: TextInputType.number),
+                CustomTextField(controller: breedController, label: 'Breed', validationMessage: 'Please Enter Compatible breeds'),
+                CustomTextField(controller: stockController, label: 'Stock', validationMessage: 'Please Enter Stock',keyboardType: TextInputType.number,),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () {
+                  
                     if (_formKey.currentState!.validate()) {
                       final petProduct = petProductModel(
                         id: 'unique-product-id',
@@ -114,7 +126,7 @@ class _AddProductState extends State<AddProduct> {
                         breed: breedController.text,
                         stock: int.tryParse(stockController.text) ?? 0,
                       );
-
+                       
                       context.read<AddpetproductBloc>().add(AddproductEvent(petProduct));
                     }
                   },
@@ -138,32 +150,4 @@ class _AddProductState extends State<AddProduct> {
     );
   }
 
-  
-  
-  
-
-  Widget _buildTextField(
-    TextEditingController controller,
-    String label,
-    String validationMessage, {
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return validationMessage;
-          }
-          return null;
-        },
-      ),
-    );
-  }
 }

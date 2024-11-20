@@ -44,6 +44,9 @@ dependencies:
   fl_chart: ^0.69.0
   image_picker: ^1.1.2
   firebase_storage: ^12.3.5
+  flutter_rating_stars: ^1.1.0
+  rating_dialog: ^2.0.4
+  flutter_rating_bar: ^4.0.1
   
 
 dev_dependencies:

@@ -35,7 +35,7 @@ factory ProductAccessoriesModel.fromJson(Map<String,dynamic>json){
     );
 }
 
-Map<String,dynamic>toJson(){
+Map<String,dynamic>toMap(){
   return{
     'id':id,
     'accesoryname':accesoryname,
