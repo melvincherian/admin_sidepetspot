@@ -34,7 +34,7 @@ class _ProductViewState extends State<ProductView> {
           children: [
             _buildActionButton(
               label: 'Add Pet Product',
-              color: Colors.grey,
+              color: Colors.green,
               icon: Icons.pets,
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddProduct()));
@@ -58,57 +58,57 @@ class _ProductViewState extends State<ProductView> {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>const FoodManagement()));
               },
             ),
-             const SizedBox(height: 16),
-             _buildActionButton(
-              label: 'Pet product Detail',
-              color: Colors.grey,
-              icon: Icons.details,
-              onTap: () {
-                // Navigator.push(context,MaterialPageRoute(builder: (context)=>))
-                // Navigate to Add Accessories Product page
-                // Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddPetDetail(product: product)));
-              },
-            ),
-             const SizedBox(height: 16),
-             _buildActionButton(
-              label: 'Accesories Detail',
-              color: Colors.grey,
-              icon: Icons.shop_two,
-              onTap: () {
-                // Navigate to Add Accessories Product page
-              },
-            ),
-             const SizedBox(height: 16),
-             _buildActionButton(
-              label: 'Food Detail',
-              color: Colors.grey,
-              icon: Icons.food_bank_outlined,
-              onTap: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodProductDetail(product: product,)));
-                // Navigate to Add Accessories Product page
-              },
-            ),
+            //  const SizedBox(height: 16),
+            //  _buildActionButton(
+            //   label: 'Pet product Detail',
+            //   color: Colors.grey,
+            //   icon: Icons.details,
+            //   onTap: () {
+               
+            //     // Navigator.push(context, MaterialPageRoute(builder: (context)=>const ProductDetailsScreen()));
+            //   },
+            // ),
+            //  const SizedBox(height: 16),
+            //  _buildActionButton(
+            //   label: 'Accesories Detail',
+            //   color: Colors.grey,
+            //   icon: Icons.shop_two,
+            //   onTap: () {
+            //     // Navigator.push(context, MaterialPageRoute(builder: (context)=>AccessoriesListScreen()));
+            //     // Navigate to Add Accessories Product page
+            //   },
+            // ),
+            //  const SizedBox(height: 16),
+            //  _buildActionButton(
+            //   label: 'Food Detail',
+            //   color: Colors.grey,
+            //   icon: Icons.food_bank_outlined,
+            //   onTap: () {
+            //     // Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodProductDetailScreen(productId: id,)));
+            //     // Navigate to Add Accessories Product page
+            //   },
+            // ),
               const SizedBox(height: 16),
              _buildActionButton(
               label: 'Breed Session',
               color: Colors.grey,
               icon: Icons.pets,
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>PetBreed()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>const PetBreed()));
                 // Navigate to Add Accessories Product page
               },
             ),
 
-              const SizedBox(height: 16),
-             _buildActionButton(
-              label: 'Breed Detail',
-              color: Colors.grey,
-              icon: Icons.pets,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>BreedDetail()));
-                // Navigate to Add Accessories Product page
-              },
-            ),
+            //   const SizedBox(height: 16),
+            //  _buildActionButton(
+            //   label: 'Breed Detail',
+            //   color: Colors.grey,
+            //   icon: Icons.pets,
+            //   onTap: () {
+            //     Navigator.push(context, MaterialPageRoute(builder: (context)=>BreedDetail()));
+            //     // Navigate to Add Accessories Product page
+            //   },
+            // ),
           ],
         ),
       ),

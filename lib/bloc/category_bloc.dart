@@ -26,4 +26,18 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       emit(CategoryError('Failed to add category: $error'));
     }
   }
+
+   
+    Future<void> _onFetchCategories(FetchCategoriesEvent event, Emitter<CategoryState> emit) async {
+    emit(CategoryLoading());
+    try {
+      final categories = await categoryRepository.fetchCategories();
+      emit(CategoriesFetched(categories));
+    } catch (error) {
+      emit(CategoryError('Failed to fetch categories: $error'));
+    }
+  }
+
+  
+
 }

@@ -15,6 +15,28 @@ final class CategoryError extends CategoryState{
   CategoryError(this.message);
 }
 
+class CategoriesFetched extends CategoryState {
+  final List<Category> categories;
+  CategoriesFetched(this.categories);
+}
+
+class CategoryLoadeded extends CategoryState {
+  final List<String> categories;
+  final String? selectedCategory;
+  CategoryLoadeded(this.categories, this.selectedCategory);
+}
+
+
+
+
+// class CategoryLoaded extends CategoryState {
+//   final List<Category> categories;
+
+//   CategoryLoaded(this.categories);
+// }
+
+
+
 
 
 

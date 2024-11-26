@@ -5,7 +5,7 @@ class BreedModel {
   final String? popularity;
   final String? ratings;
   final String?reviews;
-  final String? image;
+    final List<String> imageUrls;
   final String? description;
   final String? size;
   final String? careRequirements;
@@ -19,7 +19,7 @@ class BreedModel {
     this.popularity,
     this.reviews,
     this.ratings,
-    this.image,
+     required this.imageUrls,
     this.description,
     this.size,
     this.careRequirements,
@@ -34,7 +34,7 @@ class BreedModel {
       'category': category,
       'popularity': popularity,
       'ratings': ratings,
-      'image': image,
+        'imageUrls': imageUrls,
       'description': description,
       'size': size,
       'careRequirements': careRequirements,
@@ -51,7 +51,7 @@ class BreedModel {
       category: json['category'] as String,
       popularity: json['popularity'] as String,
       ratings: json['ratings'] as String,
-      image: json['image'] as String?,
+       imageUrls: List<String>.from(json['imageUrls'] ?? []),
       description: json['description'] as String?,
       size: json['size'] as String?,
       careRequirements: json['careRequirements'] as String?,

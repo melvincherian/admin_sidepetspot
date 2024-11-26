@@ -7,6 +7,7 @@ import 'package:petspot_admin_side/bloc/breed_bloc.dart';
 import 'package:petspot_admin_side/bloc/category_bloc.dart';
 import 'package:petspot_admin_side/bloc/foodproduct_bloc.dart';
 import 'package:petspot_admin_side/bloc/imagepicker_bloc.dart';
+import 'package:petspot_admin_side/bloc/multipleimage_bloc.dart';
 import 'package:petspot_admin_side/firebase/accesory_product.dart';
 import 'package:petspot_admin_side/firebase/add_pet_pro.dart';
 import 'package:petspot_admin_side/firebase/breed_session.dart';
@@ -25,13 +26,12 @@ class MyApp extends StatelessWidget {
  
   @override
   Widget build(BuildContext context) {
-    // Create the CategoryRepository instance
+   
     final categoryRepository = CategoryRepository();
 
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          // Provide the CategoryBloc with the CategoryRepository instance
           create: (context) => CategoryBloc(categoryRepository),
         ),
         BlocProvider(
@@ -49,6 +49,9 @@ class MyApp extends StatelessWidget {
         ),
          BlocProvider(
           create: (context)=>BreedBloc(BreedRepository())
+        ),
+         BlocProvider(
+          create: (context)=>MultipleimageBloc()
         )
 
       ],

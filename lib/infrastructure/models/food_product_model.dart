@@ -5,7 +5,8 @@ class FoodProductModel {
   final String description;
   final double price;
   final int stock;
-  final String?image;
+   final List<String> imageUrls;
+  // final String?image;
   final String foodweight;
   final String packedDate;
   final String endDate;
@@ -18,7 +19,7 @@ class FoodProductModel {
     required this.price,
     required this.stock,
     required this.foodweight,
-     this.image,
+       required this.imageUrls,
     required this.packedDate,
     required this.endDate
 
@@ -34,7 +35,8 @@ class FoodProductModel {
       stock: json['stock'], 
       foodweight: json['foodweight'],
       packedDate: json['packedDate'],
-      endDate: json['endDate']
+      endDate: json['endDate'],
+        imageUrls: List<String>.from(json['imageUrls'] ?? []),
       
       );
   }
@@ -49,7 +51,8 @@ class FoodProductModel {
       'stock':stock,
       'foodweight':foodweight,
       'packedDate':packedDate,
-      'endDate':endDate
+      'endDate':endDate,
+       'imageUrls': imageUrls,
     };
 
   }

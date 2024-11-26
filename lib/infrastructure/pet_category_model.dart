@@ -9,7 +9,7 @@ Category({
   required this.id,
   required this.name,
   required this.description,
-  this.image
+  required this.image
   
 
 });
@@ -18,7 +18,8 @@ Map<String,dynamic>toMap(){
   return {
     'id':id,
     'name':name,
-    'description':description
+    'description':description,
+    'image':image
   };
 }
 

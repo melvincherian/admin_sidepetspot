@@ -24,3 +24,9 @@ class AccessoriesFailure extends AccessoriesState{
 
   AccessoriesFailure(this.error);
 }
+
+
+// class AccessoriesCategoriesLoaded extends AccessoriesState {
+//   final List<Category> categories;
+//   AccessoriesCategoriesLoaded(this.categories);
+// }

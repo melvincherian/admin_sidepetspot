@@ -11,3 +11,10 @@ class AddcategoryEvent extends CategoryEvent{
 }
 
 class FetchCategoriesEvent extends CategoryEvent {} 
+
+
+// class CategoryLoaded extends CategoryState {
+//   final List<Category> categories;
+
+//   CategoryLoaded(this.categories);
+// }

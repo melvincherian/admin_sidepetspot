@@ -1,14 +1,43 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:petspot_admin_side/bloc/foodproduct_bloc.dart';
-import 'package:petspot_admin_side/bloc/imagepicker_bloc.dart';
+import 'package:petspot_admin_side/bloc/multipleimage_bloc.dart';
 import 'package:petspot_admin_side/infrastructure/models/food_product_model.dart';
 
+import 'package:petspot_admin_side/presentation/widgets/pet_add_widget.dart';
+import 'package:petspot_admin_side/services/image_store.dart';
 
-class FoodManagement extends StatelessWidget {
+class FoodManagement extends StatefulWidget {
   const FoodManagement({super.key});
+
+  @override
+  State<FoodManagement> createState() => _FoodManagementState();
+}
+
+class _FoodManagementState extends State<FoodManagement> {
+  String? selectedCategory;
+  List<String> categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async {
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance.collection('categories').get();
+      setState(() {
+        categories = snapshot.docs.map((doc) => doc['name'] as String).toList();
+      });
+    } catch (e) {
+      print('Error fetching categories: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +59,15 @@ class FoodManagement extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 backgroundColor: Colors.green,
                 content: Text('Food Product Addedd Successfully')));
+
+            nameController.clear();
+            categoryController.clear();
+            descriptionController.clear();
+            priceController.clear();
+            stockController.clear();
+            weightController.clear();
+            startdateConroller.clear();
+            enddateConroller.clear();
           } else if (state is FoodProductFailure) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 backgroundColor: Colors.red,
@@ -53,72 +91,117 @@ class FoodManagement extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 30),
-
-                // Image Upload Section
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    const CircleAvatar(
-                      radius: 60,
-                      backgroundImage: NetworkImage(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSQRctzYQ1Vrb313CJ1nCqyE9EqF_DeJE5-A&s'),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 10,
-                      child: GestureDetector(
-                        onTap: () => context
-                            .read<ImagepickerBloc>()
-                            .add(PickImageEvent()),
-                        child: BlocBuilder<ImagepickerBloc, ImagepickerState>(
-                            builder: (context, state) {
-                          if (state is ImagepickerSuccess) {
-                            return Image.file(
-                              state.imageFile,
-                              height: 120,
-                              width: 120,
-                              fit: BoxFit.cover,
-                            );
-                          } else {
-                            return const CircleAvatar(
-                              radius: 18,
-                              backgroundColor: Colors.teal,
-                              child: Icon(
-                                Icons.camera_alt,
-                                size: 18,
+                const SizedBox(height: 20),
+                GestureDetector(
+                  onTap: () => context
+                      .read<MultipleimageBloc>()
+                      .add(MultiPickImageEvent()),
+                  child: BlocBuilder<MultipleimageBloc, MultipleimageState>(
+                    builder: (context, state) {
+                      if (state is MultipleImagesuccess) {
+                        return GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3, // Number of images per row
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                          ),
+                          itemCount: state.images.length,
+                          itemBuilder: (context, index) {
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.file(
+                                state.images[index],
+                                fit: BoxFit.cover,
                               ),
                             );
-                          }
-                        }),
-                      ),
-                    ),
-                  ],
+                          },
+                        );
+                      } else if (state is MultipleImageFailure) {
+                        return Text(
+                          state.errormessage,
+                          style: const TextStyle(color: Colors.red),
+                        );
+                      } else {
+                        return const CircleAvatar(
+                          radius: 60,
+                          backgroundImage: NetworkImage(
+                            'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/461fed23287735.599f500689d80.jpg',
+                          ),
+                          backgroundColor: Colors.grey,
+                        );
+                      }
+                    },
+                  ),
                 ),
+                // Image Upload Section
+
                 const SizedBox(height: 20),
 
                 // Text Fields
-                _buildTextField(
-                    nameController, 'Food Name', 'Please enter food name'),
-                _buildTextField(
-                    categoryController, 'Category', 'Please enter category'),
-                _buildTextField(descriptionController, 'Description',
-                    'Please enter description'),
-                _buildTextField(
-                  priceController,
-                  'Price',
-                  'Please enter price',
-                  keyboardType: TextInputType.number,
+                CustomTextField(
+                    controller: nameController,
+                    label: 'name',
+                    validationMessage: 'Please Enter food name'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 17.0),
+                  child: DropdownButtonFormField<String>(
+                    value: selectedCategory,
+                    items: categories
+                        .map((category) => DropdownMenuItem<String>(
+                              value: category,
+                              child: Text(category),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      selectedCategory = value!;
+                      // setState(() {
+                      //   selectedCategory = value!;
+                      // });
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Category',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) => value == null || value.isEmpty
+                        ? 'Please select a category'
+                        : null,
+                  ),
                 ),
-                _buildTextField(
-                    stockController, 'Stock', 'Please enter stock quantity'),
-                _buildTextField(weightController, 'Weight',
-                    'Please enter weight (e.g., grams)',
+
+                // CustomTextField(
+                //     controller: categoryController,
+                //     label: 'Category',
+                //     validationMessage: 'Please Enter Category'),
+                CustomTextField(
+                    controller: descriptionController,
+                    label: 'Description',
+                    validationMessage: 'Please Enter Description'),
+                CustomTextField(
+                    controller: priceController,
+                    label: 'Price',
+                    validationMessage: 'Please Enter Price',
                     keyboardType: TextInputType.number),
-                _buildTextField(startdateConroller, 'Start date',
-                    'Please Enter start date'),
-                _buildTextField(
-                    enddateConroller, 'End date', 'Please Enter End date'),
-                const SizedBox(height: 30),
+                CustomTextField(
+                    controller: stockController,
+                    label: 'Stock',
+                    validationMessage: 'Please Enter a Stock detail'),
+                CustomTextField(
+                    controller: weightController,
+                    label: 'Weight',
+                    validationMessage: 'Please Enter Weight'),
+                CustomTextField(
+                    controller: startdateConroller,
+                    label: 'Startdate',
+                    validationMessage: 'Please Enter the start date'),
+                CustomTextField(
+                    controller: enddateConroller,
+                    label: 'Endate',
+                    validationMessage: 'Please Enter the end date'),
+                SizedBox(height: 15),
 
                 // Save Button
                 SizedBox(
@@ -131,26 +214,42 @@ class FoodManagement extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
+                        final multipleImageBloc =
+                            context.read<MultipleimageBloc>();
+                        final imageState = multipleImageBloc.state;
+
+                        List<String> imageUrls = [];
+
+                        if (imageState is MultipleImagesuccess) {
+                          // Loop through each selected image and upload it to Cloudinary
+                          for (var image in imageState.images) {
+                            final imageUrl =
+                                await CloudinaryService.uploadImage(image);
+                            if (imageUrl != null) {
+                              imageUrls.add(imageUrl);
+                            }
+                          }
+                        }
+
                         final product = FoodProductModel(
-                          id: 'id',
-                          foodname: nameController.text,
-                          category: categoryController.text,
-                          description: descriptionController.text,
-                          price: double.tryParse(priceController.text) ?? 0,
-                          stock: int.parse(stockController.text),
-                          foodweight: weightController.text,
-                          packedDate: startdateConroller.text,
-                          endDate: enddateConroller.text,
-                        );
+                            id: 'id',
+                            foodname: nameController.text,
+                            category: selectedCategory ?? '',
+                            description: descriptionController.text,
+                            price: double.tryParse(priceController.text) ?? 0,
+                            stock: int.parse(stockController.text),
+                            foodweight: weightController.text,
+                            packedDate: startdateConroller.text,
+                            endDate: enddateConroller.text,
+                            imageUrls: imageUrls);
                         context
                             .read<FoodproductBloc>()
                             .add(AddfoodEvent(product));
 
-                            // Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodDetailsScreen(foodProduct: product)));
+                        // Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodProductDetailsScreen(foodProduct: product)));
                       }
-
                     },
                     child: const Text(
                       'Save',
@@ -165,45 +264,6 @@ class FoodManagement extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(
-    TextEditingController controller,
-    String label,
-    String validationMessage, {
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          labelText: label,
-          // labelStyle: TextStyle(color: Colors.teal.shade700),
-          filled: true,
-          // fillColor: Colors.grey.shade100,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.teal, width: 1.5),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.teal, width: 2),
-          ),
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return validationMessage;
-          }
-          return null;
-        },
       ),
     );
   }

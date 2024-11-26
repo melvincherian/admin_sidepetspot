@@ -1,47 +1,72 @@
-// ignore_for_file: no_leading_underscores_for_local_identifiers
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:petspot_admin_side/bloc/accessories_bloc.dart';
-import 'package:petspot_admin_side/bloc/imagepicker_bloc.dart';
+import 'package:petspot_admin_side/bloc/multipleimage_bloc.dart';
 import 'package:petspot_admin_side/infrastructure/models/product_accessories_model.dart';
+import 'package:petspot_admin_side/presentation/widgets/pet_add_widget.dart';
+import 'package:petspot_admin_side/services/image_store.dart';
 
-class AccesoryManagement extends StatelessWidget {
+class AccesoryManagement extends StatefulWidget {
   const AccesoryManagement({super.key});
 
   @override
+  State<AccesoryManagement> createState() => _AccesoryManagementState();
+}
+
+class _AccesoryManagementState extends State<AccesoryManagement> {
+  final nameController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final sizeController = TextEditingController();
+  final stockController = TextEditingController();
+  final priceController = TextEditingController();
+  final petTypeController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+
+  String? selectedCategory;
+  List<String> categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async {
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance.collection('categories').get();
+      setState(() {
+        categories = snapshot.docs.map((doc) => doc['name'] as String).toList();
+      });
+    } catch (e) {
+      print('Error fetching categories: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final nameController = TextEditingController();
-    final categoryController = TextEditingController();
-    final descriptionController = TextEditingController();
-    final sizeController = TextEditingController();
-    final stockController = TextEditingController();
-    final priceController = TextEditingController();
-    final petTypeController = TextEditingController();
-
-    final _formKey = GlobalKey<FormState>();
-
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(
-      //     'Add Accessories',
-      //     style: TextStyle(
-      //       fontSize: 24,
-      //       fontWeight: FontWeight.bold,
-      //     ),
-      //   ),
-      //   centerTitle: true,
-      // ),
       body: BlocListener<AccessoriesBloc, AccessoriesState>(
         listener: (context, state) {
           if (state is AccessoriesSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 backgroundColor: Colors.green,
-                content: Text('Food Product Addedd Successfully')));
+                content: Text('Accessory Added Successfully')));
+            nameController.clear();
+            descriptionController.clear();
+            sizeController.clear();
+            stockController.clear();
+            priceController.clear();
+            petTypeController.clear();
+            setState(() {
+              selectedCategory = null;
+            });
           } else if (state is AccessoriesFailure) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 backgroundColor: Colors.red,
-                content: Text('Failed to Add food product')));
+                content: Text('Failed to Add Accessory')));
           }
         },
         child: SingleChildScrollView(
@@ -59,71 +84,145 @@ class AccesoryManagement extends StatelessWidget {
                         color: Colors.teal),
                   ),
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () => context
-                            .read<ImagepickerBloc>()
-                            .add(PickImageEvent()),
-                        child: BlocBuilder<ImagepickerBloc, ImagepickerState>(
-                            builder: (context, state) {
-                          if (state is ImagepickerSuccess) {
-                            return Image.file(
-                              state.imageFile,
-                              height: 120,
-                              width: 120,
-                              fit: BoxFit.cover,
-                            );
-                          } else {
-                            return const SizedBox(
-                              height: 120,
-                              width: 120,
-                              child: Icon(
-                                Icons.camera_alt,
-                                size: 50,
-                              ),
-                            );
-                          }
-                        }),
-                        // child: CircleAvatar(
-                        //   radius: 50,
-                        //   backgroundImage: NetworkImage('https://images.all-free-download.com/images/graphiclarge/dog_pet_accessories_icons_3d_colored_design_6834308.jpg'),
-                        // ),
-                      )
-                    ],
+
+                  // Image Picker
+
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: () => context
+                        .read<MultipleimageBloc>()
+                        .add(MultiPickImageEvent()),
+                    child: BlocBuilder<MultipleimageBloc, MultipleimageState>(
+                      builder: (context, state) {
+                        if (state is MultipleImagesuccess) {
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3, // Number of images per row
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                            ),
+                            itemCount: state.images.length,
+                            itemBuilder: (context, index) {
+                              return ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.file(
+                                  state.images[index],
+                                  fit: BoxFit.cover,
+                                ),
+                              );
+                            },
+                          );
+                        } else if (state is MultipleImageFailure) {
+                          return Text(
+                            state.errormessage,
+                            style: const TextStyle(color: Colors.red),
+                          );
+                        } else {
+                          return const CircleAvatar(
+                            radius: 60,
+                            backgroundImage: NetworkImage(
+                              'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/461fed23287735.599f500689d80.jpg',
+                            ),
+                            backgroundColor: Colors.grey,
+                          );
+                        }
+                      },
+                    ),
                   ),
-                  _buildTextField(
-                      nameController, 'Accesory name', 'Please Enter name'),
-                  _buildTextField(
-                      categoryController, 'Category', 'Please Enter category'),
-                  _buildTextField(descriptionController, 'Description',
-                      'Please Enter Description'),
-                  _buildTextField(sizeController, 'Size', 'Please Enter Size'),
-                  _buildTextField(
-                      stockController, 'Stock', 'Please Enter stock'),
-                  _buildTextField(
-                      priceController, 'Price', 'Please Enter Price'),
-                  _buildTextField(
-                      petTypeController, 'PetType', 'Please Enter PetType'),
+                  CustomTextField(
+                      controller: nameController,
+                      label: 'Accessory Name',
+                      validationMessage: 'Please Enter Accessory name'),
+
+                  // Category Dropdown
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 16.0),
+                    child: DropdownButtonFormField<String>(
+                      value: selectedCategory,
+                      items: categories
+                          .map((category) => DropdownMenuItem<String>(
+                                value: category,
+                                child: Text(category),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCategory = value!;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'Category',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please select a category'
+                          : null,
+                    ),
+                  ),
+
+                  CustomTextField(
+                      controller: descriptionController,
+                      label: 'Description',
+                      validationMessage: 'Please Enter Description'),
+                  CustomTextField(
+                      controller: sizeController,
+                      label: 'Size',
+                      validationMessage: 'Please Enter Size'),
+                  CustomTextField(
+                      controller: stockController,
+                      label: 'Stock',
+                      validationMessage: 'Please Enter the stock'),
+                  CustomTextField(
+                      controller: priceController,
+                      label: 'Price',
+                      validationMessage: 'Please Enter price'),
+                  CustomTextField(
+                      controller: petTypeController,
+                      label: 'Pet Type',
+                      validationMessage: 'Please Enter Pet Type'),
+
                   const SizedBox(height: 25),
+
                   ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          final accesory = ProductAccessoriesModel(
-                              id: 'id',
-                              accesoryname: nameController.text,
-                              category: categoryController.text,
-                              image: '',
-                              description: descriptionController.text,
-                              price: double.tryParse(priceController.text) ?? 0,
-                              size: sizeController.text,
-                              stock: int.parse(stockController.text),
-                              petType: petTypeController.text);
+                          final multipleImageBloc =
+                              context.read<MultipleimageBloc>();
+                          final imageState = multipleImageBloc.state;
+ 
+                          List<String> imageUrls = [];
+
+                          if (imageState is MultipleImagesuccess) {
+                            // Loop through each selected image and upload it to Cloudinary
+                            for (var image in imageState.images) {
+                              final imageUrl =
+                                  await CloudinaryService.uploadImage(image);
+                              if (imageUrl != null) {
+                                imageUrls.add(imageUrl);
+                              }
+                            }
+                          }
+
+                          final accessory = ProductAccessoriesModel(
+                            id: 'id', // Generate a unique ID here
+                            accesoryname: nameController.text,
+                            category: selectedCategory!,
+                            imageUrls:
+                                imageUrls, // Add logic to handle image URL
+                            description: descriptionController.text,
+                            price: double.tryParse(priceController.text) ?? 0,
+                            size: sizeController.text,
+                            stock: int.parse(stockController.text),
+                            petType: petTypeController.text,
+                          );
 
                           context
                               .read<AccessoriesBloc>()
-                              .add(AddAccessoriesevent(accesory));
+                              .add(AddAccessoriesevent(accessory));
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -136,51 +235,12 @@ class AccesoryManagement extends StatelessWidget {
                       child: const Text(
                         'Save',
                         style: TextStyle(color: Colors.white),
-                      ))
+                      )),
                 ],
               ),
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(
-    TextEditingController controller,
-    String label,
-    String validationMessage, {
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          labelText: label,
-          // labelStyle: TextStyle(color: Colors.teal.shade700),
-          filled: true,
-          // fillColor: Colors.grey.shade100,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.teal, width: 1.5),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.teal, width: 2),
-          ),
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return validationMessage;
-          }
-          return null;
-        },
       ),
     );
   }

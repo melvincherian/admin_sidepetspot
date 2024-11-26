@@ -6,10 +6,11 @@ class petProductModel{
   final double price;
   final String description;
   final String weight;
-  final String color;
+  // final String color;
   final String breed;
   final int stock;
-  final String?imageUrl;
+  // final String?imageUrl;
+  final List<String> imageUrls;
   
 
   petProductModel({
@@ -18,10 +19,11 @@ class petProductModel{
     required this.price,
     required this.description,
     required this.weight,
-    required this.color,
+    // required this.color,
     required this.breed,
     required this.stock,
-    this.imageUrl
+    // this.imageUrl
+        required this.imageUrls,
     
 
   });
@@ -33,10 +35,10 @@ class petProductModel{
       price: json['price'], 
       description: json['description'], 
       weight: json['weight'], 
-      color: json['color'], 
+      // color: json['color'], 
       breed: json['breed'], 
       stock: json['stock'],
-      imageUrl: json['imageUrl']
+     imageUrls: List<String>.from(json['imageUrls'] ?? []),
       );
   }
 
@@ -46,10 +48,10 @@ class petProductModel{
       'price': price,
       'description': description,
       'weight': weight,
-      'color': color,
+      // 'color': color,
       'breed': breed,
       'stock': stock,
-      'imageUrl': imageUrl,
+       'imageUrls': imageUrls,
     };
   }
 

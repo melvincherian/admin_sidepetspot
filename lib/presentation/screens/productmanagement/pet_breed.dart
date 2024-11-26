@@ -1,50 +1,74 @@
-// ignore_for_file: no_leading_underscores_for_local_identifiers
+// ignore_for_file: depend_on_referenced_packages, use_super_parameters, no_leading_underscores_for_local_identifiers
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:petspot_admin_side/bloc/breed_bloc.dart';
-import 'package:petspot_admin_side/bloc/imagepicker_bloc.dart';
+import 'package:petspot_admin_side/bloc/multipleimage_bloc.dart';
 import 'package:petspot_admin_side/infrastructure/models/breed_model.dart';
 import 'package:petspot_admin_side/presentation/widgets/breed_textfield.dart';
+import 'package:petspot_admin_side/services/image_store.dart';
+// Adjust import based on your project structure
 
-class PetBreed extends StatelessWidget {
-  const PetBreed({super.key});
+class PetBreed extends StatefulWidget {
+  const PetBreed({Key? key}) : super(key: key);
+
+  @override
+  State<PetBreed> createState() => _PetBreedState();
+}
+
+class _PetBreedState extends State<PetBreed> {
+  String? selectedCategory;
+  List<String> categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async {
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance.collection('categories').get();
+      setState(() {
+        categories = snapshot.docs.map((doc) => doc['name'] as String).toList();
+      });
+    } catch (e) {
+      print('Error fetching categories: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final nameController = TextEditingController();
     final categoryController = TextEditingController();
-    // final popularityController = TextEditingController();
-    // //  final ratingsCotroller= TextEditingController();
-    //  final reviewsController = TextEditingController();
-     final descriptionController=TextEditingController();
-     final sizeController=TextEditingController();
-     final careController=TextEditingController();
-     final priceController=TextEditingController();
-    //  final isAvailableController=TextEditingController();
-    final _formKey=GlobalKey<FormState>();
+    final descriptionController = TextEditingController();
+    final sizeController = TextEditingController();
+    final careController = TextEditingController();
+    final priceController = TextEditingController();
+    final _formKey = GlobalKey<FormState>();
 
     return Scaffold(
-    
-      body: BlocListener<BreedBloc,BreedState>(
-        listener: (context,state){
-           if(state is BreedSuccess){
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              backgroundColor: Colors.green,
-              content: Text('Breed Added Successfully')
-              ));
-
+      body: Form(
+        key: _formKey,
+        child: BlocListener<BreedBloc, BreedState>(
+          listener: (context, state) {
+            if (state is BreedSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  backgroundColor: Colors.green,
+                  content: Text('Breed Added Successfully'),
+                ),
+              );
               nameController.clear();
               categoryController.clear();
               descriptionController.clear();
               sizeController.clear();
               careController.clear();
               priceController.clear();
-              
-           }
-        },
-        child: Form(
-          key: _formKey,
+            }
+          },
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             child: Center(
@@ -62,27 +86,46 @@ class PetBreed extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   GestureDetector(
-                    onTap: () =>
-                        context.read<ImagepickerBloc>().add(PickImageEvent()),
-                    child: BlocBuilder<ImagepickerBloc, ImagepickerState>(
+                    onTap: () => context
+                        .read<MultipleimageBloc>()
+                        .add(MultiPickImageEvent()),
+                    child: BlocBuilder<MultipleimageBloc, MultipleimageState>(
                       builder: (context, state) {
-                        return state is ImagepickerSuccess
-                            ? ClipRRect(
+                        if (state is MultipleImagesuccess) {
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3, // Number of images per row
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                            ),
+                            itemCount: state.images.length,
+                            itemBuilder: (context, index) {
+                              return ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: Image.file(
-                                  state.imageFile,
-                                  height: 120,
-                                  width: 120,
+                                  state.images[index],
                                   fit: BoxFit.cover,
                                 ),
-                              )
-                            : CircleAvatar(
-                                radius: 60,
-                                backgroundImage: const NetworkImage(
-                                  'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/461fed23287735.599f500689d80.jpg',
-                                ),
-                                backgroundColor: Colors.grey[200],
                               );
+                            },
+                          );
+                        } else if (state is MultipleImageFailure) {
+                          return Text(
+                            state.errormessage,
+                            style: const TextStyle(color: Colors.red),
+                          );
+                        } else {
+                          return const CircleAvatar(
+                            radius: 60,
+                            backgroundImage: NetworkImage(
+                              'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/461fed23287735.599f500689d80.jpg',
+                            ),
+                            backgroundColor: Colors.grey,
+                          );
+                        }
                       },
                     ),
                   ),
@@ -102,96 +145,116 @@ class PetBreed extends StatelessWidget {
                             validationMessage: 'Please Enter Breed name',
                           ),
                           const SizedBox(height: 16),
-                          BreedTextField(
-                            controller: categoryController,
-                            label: 'Category',
-                            validationMessage: 'Please Enter Category',
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
+                            child: DropdownButtonFormField<String>(
+                              value: selectedCategory,
+                              items: categories
+                                  .map((category) => DropdownMenuItem<String>(
+                                        value: category,
+                                        child: Text(category),
+                                      ))
+                                  .toList(),
+                              onChanged: (value) {
+                                // selectedCategory=value!;
+                                // setState(() {
+                                //   selectedCategory = value!;
+                                // });
+                              },
+                              decoration: const InputDecoration(
+                                labelText: 'Category',
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) =>
+                                  value == null || value.isEmpty
+                                      ? 'Please select a category'
+                                      : null,
+                            ),
                           ),
-                          // const SizedBox(height: 16),
                           // BreedTextField(
-                          //   controller: popularityController,
-                          //   label: 'Popularity',
-                          //   validationMessage: 'Please Enter Popularity',
-                          // ),
-                          //   const SizedBox(height: 16),
-                          //   BreedTextField(
-                          //   controller: ratingsCotroller,
-                          //   label: 'Ratings',
-                          //   validationMessage: 'Please Enter Ratings',
-                          // ),
-                          //  const SizedBox(height: 16),
-                          //   BreedTextField(
-                          //   controller: reviewsController,
-                          //   label: 'Review',
-                          //   validationMessage: 'Please Enter Review ratings',
+                          //   controller: categoryController,
+                          //   label: 'Category',
+                          //   validationMessage: 'Please Enter Category',
                           // ),
                           const SizedBox(height: 16),
-                            BreedTextField(
+                          BreedTextField(
                             controller: descriptionController,
                             label: 'Description',
                             validationMessage: 'Please Enter Description',
                           ),
-                            const SizedBox(height: 16),
-                            BreedTextField(
+                          const SizedBox(height: 16),
+                          BreedTextField(
                             controller: sizeController,
                             label: 'Size',
                             validationMessage: 'Please Enter Size',
                           ),
-                            const SizedBox(height: 16),
-                            BreedTextField(
+                          const SizedBox(height: 16),
+                          BreedTextField(
                             controller: careController,
                             label: 'Care Requirement',
                             validationMessage: 'Please Enter requirement',
                           ),
-                           const SizedBox(height: 16),
-                            BreedTextField(
+                          const SizedBox(height: 16),
+                          BreedTextField(
                             controller: priceController,
                             label: 'Price',
                             validationMessage: 'Please Enter Price',
                           ),
-                          // const SizedBox(height: 16),
-                          //   BreedTextField(
-                          //   controller: isAvailableController,
-                          //   label: 'Available',
-                          //   validationMessage: 'Please Enter Detail',
-                          // ),
                         ],
                       ),
                     ),
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton(
-                    onPressed: () {
-                      if(_formKey.currentState!.validate()){
-                        final breedmodel=BreedModel(
-                          id: '', 
-                          name: nameController.text, 
-                          category: categoryController.text, 
+                    onPressed: ()async {
+                      if (_formKey.currentState!.validate()) {
+                           
+                            final multipleImageBloc =
+                            context.read<MultipleimageBloc>();
+                        final imageState = multipleImageBloc.state;
+
+                        List<String> imageUrls = [];
+
+                        if (imageState is MultipleImagesuccess) {
+                          // Loop through each selected image and upload it to Cloudinary
+                          for (var image in imageState.images) {
+                            final imageUrl =
+                                await CloudinaryService.uploadImage(image);
+                            if (imageUrl != null) {
+                              imageUrls.add(imageUrl);
+                            }
+                          }
+                        }
+
+                        final breedModel = BreedModel(
+                          id: '', // Replace with a unique ID if needed
+                          name: nameController.text,
+                          category: selectedCategory??'',
                           description: descriptionController.text,
                           size: sizeController.text,
                           careRequirements: careController.text,
                           priceRange: priceController.text,
-                          // isAvailable: true
-                          
-                          
-                          );
-                          context.read<BreedBloc>().add(AddBreedEvent(breedmodel));
+                          imageUrls: imageUrls,
+                              // Update to include image URLs when saving to Firebase
+                        );
+                        context
+                            .read<BreedBloc>()
+                            .add(AddBreedEvent(breedModel));
+                        // Handle form submission
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                      backgroundColor: Colors.blue,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 40, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      textStyle: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
                     ),
-                    child: const Text('Submit',
-                    style: TextStyle(color: Colors.white),
+                    child: const Text(
+                      'Submit',
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ],

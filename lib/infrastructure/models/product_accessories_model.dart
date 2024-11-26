@@ -2,7 +2,8 @@ class ProductAccessoriesModel {
 final String id;
 final String accesoryname;
 final String category;
-final String image;
+// final String image;
+  final List<String> imageUrls;
 final String description;
 final String size;
 final int stock;
@@ -13,7 +14,7 @@ ProductAccessoriesModel({
   required this.id,
   required this.accesoryname,
   required this.category,
-  required this.image,
+   required this.imageUrls,
   required this.description,
   required this.price,
   required this.size,
@@ -26,7 +27,7 @@ factory ProductAccessoriesModel.fromJson(Map<String,dynamic>json){
     id: json['id'], 
     accesoryname: json['accesoryname'], 
     category: json['category'], 
-    image: json['image'], 
+    imageUrls: List<String>.from(json['imageUrls'] ?? []),
     description: json['description'], 
     price: json['price'], 
     size: json['size'], 
@@ -40,7 +41,7 @@ Map<String,dynamic>toMap(){
     'id':id,
     'accesoryname':accesoryname,
     'category':category,
-    'image':image,
+      'imageUrls': imageUrls,
     'description':description,
     'price':price,
     'size':size,
