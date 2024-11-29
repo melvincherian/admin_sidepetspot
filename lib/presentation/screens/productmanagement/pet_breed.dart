@@ -7,6 +7,7 @@ import 'package:petspot_admin_side/bloc/breed_bloc.dart';
 import 'package:petspot_admin_side/bloc/multipleimage_bloc.dart';
 import 'package:petspot_admin_side/infrastructure/models/breed_model.dart';
 import 'package:petspot_admin_side/presentation/widgets/breed_textfield.dart';
+import 'package:petspot_admin_side/presentation/widgets/pet_textfield_desc.dart';
 import 'package:petspot_admin_side/services/image_store.dart';
 // Adjust import based on your project structure
 
@@ -178,11 +179,12 @@ class _PetBreedState extends State<PetBreed> {
                           //   validationMessage: 'Please Enter Category',
                           // ),
                           const SizedBox(height: 16),
-                          BreedTextField(
-                            controller: descriptionController,
-                            label: 'Description',
-                            validationMessage: 'Please Enter Description',
-                          ),
+                          CustomDescriptionTextField(controller: descriptionController, label: 'Description', validationMessage: 'Please Enter Description',keyboardType: TextInputType.multiline,),
+                          // BreedTextField(
+                          //   controller: descriptionController,
+                          //   label: 'Description',
+                          //   validationMessage: 'Please Enter Description',
+                          // ),
                           const SizedBox(height: 16),
                           BreedTextField(
                             controller: sizeController,
@@ -231,10 +233,12 @@ class _PetBreedState extends State<PetBreed> {
                           id: '', // Replace with a unique ID if needed
                           name: nameController.text,
                           category: selectedCategory??'',
-                          description: descriptionController.text,
+                          // description: descriptionController.text,
+                          descriptions: [descriptionController.text],
                           size: sizeController.text,
                           careRequirements: careController.text,
-                          priceRange: priceController.text,
+                          price: double.tryParse(priceController.text) ?? 0,
+                          // priceRange: priceController.text,
                           imageUrls: imageUrls,
                               // Update to include image URLs when saving to Firebase
                         );

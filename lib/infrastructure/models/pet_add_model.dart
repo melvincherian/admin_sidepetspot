@@ -4,7 +4,8 @@ class petProductModel{
   final String id;
   final String category;
   final double price;
-  final String description;
+  // final String description;
+  final List<String> descriptions;
   final String weight;
   // final String color;
   final String breed;
@@ -17,7 +18,8 @@ class petProductModel{
     required this.id,
     required this.category,
     required this.price,
-    required this.description,
+    // required this.description,
+     required this.descriptions,
     required this.weight,
     // required this.color,
     required this.breed,
@@ -28,25 +30,39 @@ class petProductModel{
 
   });
 
-  factory petProductModel.fromJson(Map<String,dynamic>json){
+  // factory petProductModel.fromMap(Map<String,dynamic>map,String id){
+  //   return petProductModel(
+  //     id: map['id'],
+  //     category: map['category'], 
+  //     price: map['price'], 
+  //     // description: json['description'], 
+  //     descriptions: List<String>.from(map['descriptions'] ?? []),
+  //     weight: map['weight'], 
+  //     // color: json['color'], 
+  //     breed: map['breed'], 
+  //     stock: map['stock'],
+  //    imageUrls: List<String>.from(map['imageUrls'] ?? []),
+  //     );
+  // }
+   factory petProductModel.fromMap(Map<String, dynamic> map, String id) {
     return petProductModel(
-      id: json['id'],
-      category: json['category'], 
-      price: json['price'], 
-      description: json['description'], 
-      weight: json['weight'], 
-      // color: json['color'], 
-      breed: json['breed'], 
-      stock: json['stock'],
-     imageUrls: List<String>.from(json['imageUrls'] ?? []),
-      );
+      id: id,
+      category: map['category'] as String? ?? 'Unknown',
+      price: (map['price'] as num?)?.toDouble() ?? 0.0,
+      descriptions: List<String>.from(map['descriptions'] ?? []),
+      weight: map['weight'] as String? ?? 'Unknown',
+      breed: map['breed'] as String? ?? 'Unknown',
+      stock: map['stock'] as int? ?? 0,
+      imageUrls: List<String>.from(map['imageUrls'] ?? []),
+    );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'category': category,
       'price': price,
-      'description': description,
+      // 'description': description,
+       'descriptions': descriptions, 
       'weight': weight,
       // 'color': color,
       'breed': breed,

@@ -18,7 +18,7 @@ class Foodrepository {
     return _firestore.collection('foodproducts').snapshots().map((snapshot) {
       return snapshot.docs
           .map((doc) =>
-              FoodProductModel.fromJson(doc.data() as Map<String, dynamic>))
+              FoodProductModel.froMap(doc.data() as Map<String, dynamic>,doc.id))
           .toList();
     });
   }

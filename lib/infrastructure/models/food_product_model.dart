@@ -2,7 +2,8 @@ class FoodProductModel {
   final String id;
   final String foodname;
   final String category;
-  final String description;
+  // final String description;
+  final List<String> descriptions;
   final double price;
   final int stock;
    final List<String> imageUrls;
@@ -15,7 +16,8 @@ class FoodProductModel {
     required this.id,
     required this.foodname,
     required this.category,
-    required this.description,
+     required this.descriptions,
+    // required this.description,
     required this.price,
     required this.stock,
     required this.foodweight,
@@ -25,18 +27,19 @@ class FoodProductModel {
 
   });
 
-  factory FoodProductModel.fromJson(Map<String,dynamic>json){
+  factory FoodProductModel.froMap(Map<String,dynamic>map,String id){
     return FoodProductModel(
-      id: json['id'],
-      foodname: json['foodname'], 
-      category: json['category'], 
-      description: json['description'], 
-      price: json['price'], 
-      stock: json['stock'], 
-      foodweight: json['foodweight'],
-      packedDate: json['packedDate'],
-      endDate: json['endDate'],
-        imageUrls: List<String>.from(json['imageUrls'] ?? []),
+      id: map['id'],
+      foodname: map['foodname'], 
+      category: map['category'], 
+      // description: json['description'],
+       descriptions: List<String>.from(map['descriptions'] ?? []),
+      price: map['price'], 
+      stock: map['stock'], 
+      foodweight: map['foodweight'],
+      packedDate: map['packedDate'],
+      endDate: map['endDate'],
+        imageUrls: List<String>.from(map['imageUrls'] ?? []),
       
       );
   }
@@ -46,7 +49,8 @@ class FoodProductModel {
       'id':id,
       'foodname':foodname,
       'category':category,
-      'description':description,
+      'descriptions': descriptions, 
+      // 'description':description,
       'price':price,
       'stock':stock,
       'foodweight':foodweight,

@@ -5,6 +5,7 @@ import 'package:petspot_admin_side/bloc/accessories_bloc.dart';
 import 'package:petspot_admin_side/bloc/multipleimage_bloc.dart';
 import 'package:petspot_admin_side/infrastructure/models/product_accessories_model.dart';
 import 'package:petspot_admin_side/presentation/widgets/pet_add_widget.dart';
+import 'package:petspot_admin_side/presentation/widgets/pet_textfield_desc.dart';
 import 'package:petspot_admin_side/services/image_store.dart';
 
 class AccesoryManagement extends StatefulWidget {
@@ -164,10 +165,11 @@ class _AccesoryManagementState extends State<AccesoryManagement> {
                     ),
                   ),
 
-                  CustomTextField(
-                      controller: descriptionController,
-                      label: 'Description',
-                      validationMessage: 'Please Enter Description'),
+                  // CustomTextField(
+                  //     controller: descriptionController,
+                  //     label: 'Description',
+                  //     validationMessage: 'Please Enter Description'),
+                  CustomDescriptionTextField(controller: descriptionController, label: 'Description', validationMessage: 'Please Enter Description',keyboardType: TextInputType.multiline,),
                   CustomTextField(
                       controller: sizeController,
                       label: 'Size',
@@ -208,12 +210,13 @@ class _AccesoryManagementState extends State<AccesoryManagement> {
                           }
 
                           final accessory = ProductAccessoriesModel(
-                            id: 'id', // Generate a unique ID here
+                            id: DateTime.now().millisecondsSinceEpoch.toString(), // Generate a unique ID here
                             accesoryname: nameController.text,
                             category: selectedCategory!,
                             imageUrls:
                                 imageUrls, // Add logic to handle image URL
-                            description: descriptionController.text,
+                            // description: descriptionController.text,
+                            descriptions: [descriptionController.text],
                             price: double.tryParse(priceController.text) ?? 0,
                             size: sizeController.text,
                             stock: int.parse(stockController.text),

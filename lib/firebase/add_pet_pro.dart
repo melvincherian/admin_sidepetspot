@@ -18,7 +18,7 @@ class ProductRepository {
     return _firestore.collection('products').snapshots().map((snapshot) {
       return snapshot.docs
           .map((doc) =>
-              petProductModel.fromJson(doc.data() as Map<String, dynamic>))
+              petProductModel.fromMap(doc.data() as Map<String, dynamic>,doc.id))
           .toList();
     });
   }
@@ -27,7 +27,7 @@ class ProductRepository {
     try {
       var doc = await _firestore.collection('products').doc(productId).get();
       if (doc.exists) {
-        return petProductModel.fromJson(doc.data() as Map<String, dynamic>);
+        return petProductModel.fromMap(doc.data() as Map<String, dynamic>,doc.id);
       } else {
         return null;
       }

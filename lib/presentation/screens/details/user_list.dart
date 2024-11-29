@@ -47,6 +47,7 @@ class UserList extends StatelessWidget {
                       ),
                       title: Text(userData['username'] ?? 'No name'),
                       subtitle: Text(userData['email'] ?? 'No email'),
+                      
                       trailing: Text(userData['role'] ?? 'No role'),
                     ),
                     

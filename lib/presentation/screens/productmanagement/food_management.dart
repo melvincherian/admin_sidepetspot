@@ -8,6 +8,7 @@ import 'package:petspot_admin_side/bloc/multipleimage_bloc.dart';
 import 'package:petspot_admin_side/infrastructure/models/food_product_model.dart';
 
 import 'package:petspot_admin_side/presentation/widgets/pet_add_widget.dart';
+import 'package:petspot_admin_side/presentation/widgets/pet_textfield_desc.dart';
 import 'package:petspot_admin_side/services/image_store.dart';
 
 class FoodManagement extends StatefulWidget {
@@ -176,10 +177,11 @@ class _FoodManagementState extends State<FoodManagement> {
                 //     controller: categoryController,
                 //     label: 'Category',
                 //     validationMessage: 'Please Enter Category'),
-                CustomTextField(
-                    controller: descriptionController,
-                    label: 'Description',
-                    validationMessage: 'Please Enter Description'),
+                // CustomTextField(
+                //     controller: descriptionController,
+                //     label: 'Description',
+                //     validationMessage: 'Please Enter Description'),
+                CustomDescriptionTextField(controller: descriptionController, label: 'Description', validationMessage: 'Please Enter Description', keyboardType: TextInputType.multiline),
                 CustomTextField(
                     controller: priceController,
                     label: 'Price',
@@ -237,7 +239,8 @@ class _FoodManagementState extends State<FoodManagement> {
                             id: 'id',
                             foodname: nameController.text,
                             category: selectedCategory ?? '',
-                            description: descriptionController.text,
+                            // description: descriptionController.text,
+                            descriptions: [descriptionController.text],
                             price: double.tryParse(priceController.text) ?? 0,
                             stock: int.parse(stockController.text),
                             foodweight: weightController.text,

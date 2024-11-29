@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:petspot_admin_side/presentation/screens/category_view.dart';
+import 'package:petspot_admin_side/presentation/screens/courosel_slider.dart';
 import 'package:petspot_admin_side/presentation/screens/details/user_list.dart';
 import 'package:petspot_admin_side/presentation/screens/productmanagement/product_view.dart';
 // import 'package:petspot_admin_side/presentation/screens/category_management.dart';
@@ -113,6 +114,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
               title: const Text('Category Management'),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>const CategoryView()));
+              },
+            ),
+              ListTile(
+              leading:const Icon(Icons.offline_bolt_rounded),
+              title: const Text('Special Offer'),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserCarrousel()));
               },
             ),
           

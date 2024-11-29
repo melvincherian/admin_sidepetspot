@@ -5,6 +5,7 @@ import 'package:petspot_admin_side/bloc/addpetproduct_bloc.dart';
 import 'package:petspot_admin_side/bloc/multipleimage_bloc.dart';
 import 'package:petspot_admin_side/infrastructure/models/pet_add_model.dart';
 import 'package:petspot_admin_side/presentation/widgets/pet_add_widget.dart';
+import 'package:petspot_admin_side/presentation/widgets/pet_textfield_desc.dart';
 import 'package:petspot_admin_side/services/image_store.dart';
 
 
@@ -155,7 +156,8 @@ class _AddProductState extends State<AddProduct> {
                   ),
                 // CustomTextField(controller: categoryController, label: 'category', validationMessage: 'Please Enter Category'),
                 CustomTextField(controller: priceController, label: 'price', validationMessage: 'Please Eneter Price',keyboardType: TextInputType.number),
-                CustomTextField(controller: descriptionController, label: 'Description', validationMessage: 'Please Enter Description'),
+                // CustomTextField(controller: descriptionController, label: 'Description', validationMessage: 'Please Enter Description'),
+                CustomDescriptionTextField(controller: descriptionController, label: 'Description', validationMessage: 'Please Enter Description',  keyboardType: TextInputType.multiline,),
                 CustomTextField(controller: weightController, label: 'Weight', validationMessage: 'Please Enter Weight',keyboardType: TextInputType.number,),
                 // CustomTextField(controller: colorController, label: 'Color', validationMessage: 'Please Enter the color of the pet'),
                 // DropdownButtonFormField<String>(
@@ -198,7 +200,8 @@ class _AddProductState extends State<AddProduct> {
                         id: 'unique-product-id',
                         category: selectedCategory??'',
                         price: double.tryParse(priceController.text) ?? 0,
-                        description: descriptionController.text,
+                        // description: descriptionController.text,
+                        descriptions: [descriptionController.text],
                         weight: weightController.text,
                         // color: colorController.text,
                         breed: breedController.text,

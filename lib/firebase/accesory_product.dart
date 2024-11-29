@@ -20,8 +20,8 @@ class AccessoryRepository {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => ProductAccessoriesModel.fromJson(
-              doc.data() as Map<String, dynamic>))
+          .map((doc) => ProductAccessoriesModel.fromMap(
+              doc.data() as Map<String, dynamic>,doc.id))
           .toList();
     });
   }

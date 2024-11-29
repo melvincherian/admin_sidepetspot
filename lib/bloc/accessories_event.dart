@@ -13,14 +13,14 @@ class AddAccessoriesevent extends AccessoriesEvent{
 
 }
 
-class UpdateAccessoriesEvent extends AccessoriesEvent{
-  final ProductAccessoriesModel accesories;
+// class UpdateAccessoriesEvent extends AccessoriesEvent{
+//   final ProductAccessoriesModel accesories;
 
-  UpdateAccessoriesEvent(this.accesories);
-}
+//   UpdateAccessoriesEvent(this.accesories);
+// }
 
-class DeleteAccesoriesEvent extends AccessoriesEvent{
-  final String id;
+// class DeleteAccesoriesEvent extends AccessoriesEvent{
+//   final String id;
 
-  DeleteAccesoriesEvent(this.id);
-}
+//   DeleteAccesoriesEvent(this.id);
+// }

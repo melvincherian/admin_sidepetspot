@@ -8,7 +8,7 @@ class BreedRepository {
 
   Future<void> addBreed(BreedModel breed) async {
     try {
-      await _firestore.collection('breed').doc().set(breed.toJson());
+      await _firestore.collection('breed').doc().set(breed.toMap());
     } catch (e) {
       print('Error adding breeds $e');
     }
@@ -18,7 +18,7 @@ class BreedRepository {
     return _firestore.collection('breed').snapshots().map((snapshot) {
       return snapshot.docs
           .map((doc) =>
-              BreedModel.fromJson(doc.data() as Map<String, dynamic>, doc.id))
+              BreedModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
     });
   }
@@ -28,7 +28,7 @@ class BreedRepository {
       await _firestore
           .collection('breed')
           .doc(breedmodel.id)
-          .update(breedmodel.toJson());
+          .update(breedmodel.toMap());
     } catch (e) {
       print('Error updating breeds $e');
     }

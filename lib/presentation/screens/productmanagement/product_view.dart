@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:petspot_admin_side/presentation/screens/details/accessory_detail.dart';
 import 'package:petspot_admin_side/presentation/screens/details/breed_detail.dart';
+import 'package:petspot_admin_side/presentation/screens/details/food_product_detail.dart';
+import 'package:petspot_admin_side/presentation/screens/details/pet_detail.dart';
+// import 'package:petspot_admin_side/presentation/screens/details/accessory_detail.dart';
 import 'package:petspot_admin_side/presentation/screens/productmanagement/accesory_management.dart';
 import 'package:petspot_admin_side/presentation/screens/productmanagement/add_product.dart';
 import 'package:petspot_admin_side/presentation/screens/productmanagement/food_management.dart';
@@ -58,37 +62,7 @@ class _ProductViewState extends State<ProductView> {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>const FoodManagement()));
               },
             ),
-            //  const SizedBox(height: 16),
-            //  _buildActionButton(
-            //   label: 'Pet product Detail',
-            //   color: Colors.grey,
-            //   icon: Icons.details,
-            //   onTap: () {
-               
-            //     // Navigator.push(context, MaterialPageRoute(builder: (context)=>const ProductDetailsScreen()));
-            //   },
-            // ),
-            //  const SizedBox(height: 16),
-            //  _buildActionButton(
-            //   label: 'Accesories Detail',
-            //   color: Colors.grey,
-            //   icon: Icons.shop_two,
-            //   onTap: () {
-            //     // Navigator.push(context, MaterialPageRoute(builder: (context)=>AccessoriesListScreen()));
-            //     // Navigate to Add Accessories Product page
-            //   },
-            // ),
-            //  const SizedBox(height: 16),
-            //  _buildActionButton(
-            //   label: 'Food Detail',
-            //   color: Colors.grey,
-            //   icon: Icons.food_bank_outlined,
-            //   onTap: () {
-            //     // Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodProductDetailScreen(productId: id,)));
-            //     // Navigate to Add Accessories Product page
-            //   },
-            // ),
-              const SizedBox(height: 16),
+                 const SizedBox(height: 16),
              _buildActionButton(
               label: 'Breed Session',
               color: Colors.grey,
@@ -98,17 +72,48 @@ class _ProductViewState extends State<ProductView> {
                 // Navigate to Add Accessories Product page
               },
             ),
+             const SizedBox(height: 16),
+             _buildActionButton(
+              label: 'Pet product Detail',
+              color: Colors.grey,
+              icon: Icons.details,
+              onTap: () {
+               
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>const PetDetail()));
+              },
+            ),
+             const SizedBox(height: 16),
+             _buildActionButton(
+              label: 'Accesories Detail',
+              color: Colors.grey,
+              icon: Icons.shop_two,
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>AccessoryList()));
+                // Navigate to Add Accessories Product page
+              },
+            ),
+             const SizedBox(height: 16),
+             _buildActionButton(
+              label: 'Food Detail',
+              color: Colors.grey,
+              icon: Icons.food_bank_outlined,
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodProductDetail()));
+                // Navigate to Add Accessories Product page
+              },
+            ),
+         
 
-            //   const SizedBox(height: 16),
-            //  _buildActionButton(
-            //   label: 'Breed Detail',
-            //   color: Colors.grey,
-            //   icon: Icons.pets,
-            //   onTap: () {
-            //     Navigator.push(context, MaterialPageRoute(builder: (context)=>BreedDetail()));
-            //     // Navigate to Add Accessories Product page
-            //   },
-            // ),
+              const SizedBox(height: 16),
+             _buildActionButton(
+              label: 'Breed Detail',
+              color: Colors.grey,
+              icon: Icons.pets,
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>BreedDetail()));
+                // Navigate to Add Accessories Product page
+              },
+            ),
           ],
         ),
       ),
