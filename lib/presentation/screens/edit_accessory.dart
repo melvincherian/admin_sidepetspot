@@ -24,6 +24,7 @@ class _EditAccessoryState extends State<EditAccessory> {
     final stockController = TextEditingController(text: widget.accessory.stock.toString());
     final priceController = TextEditingController(text: widget.accessory.price.toString());
     final petTypeController = TextEditingController(text: widget.accessory.petType);
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text(
