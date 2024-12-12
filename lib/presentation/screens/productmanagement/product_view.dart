@@ -3,22 +3,14 @@ import 'package:petspot_admin_side/presentation/screens/details/accessory_detail
 import 'package:petspot_admin_side/presentation/screens/details/breed_detail.dart';
 import 'package:petspot_admin_side/presentation/screens/details/food_product_detail.dart';
 import 'package:petspot_admin_side/presentation/screens/details/pet_detail.dart';
-// import 'package:petspot_admin_side/presentation/screens/details/accessory_detail.dart';
 import 'package:petspot_admin_side/presentation/screens/productmanagement/accesory_management.dart';
 import 'package:petspot_admin_side/presentation/screens/productmanagement/add_product.dart';
 import 'package:petspot_admin_side/presentation/screens/productmanagement/food_management.dart';
 import 'package:petspot_admin_side/presentation/screens/productmanagement/pet_breed.dart';
 
-class ProductView extends StatefulWidget {
+class ProductView extends StatelessWidget {
   const ProductView({super.key});
 
-  @override
-  State<ProductView> createState() => _ProductViewState();
-}
-
-class _ProductViewState extends State<ProductView> {
-
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,93 +20,96 @@ class _ProductViewState extends State<ProductView> {
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        // backgroundColor: Colors.teal,
         elevation: 2,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildActionButton(
-              label: 'Add Pet Product',
-              color: Colors.green,
-              icon: Icons.pets,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddProduct()));
-              },
-            ),
-            const SizedBox(height: 16),
-            _buildActionButton(
-              label: 'Add Accessories Product',
-              color: Colors.grey,
-              icon: Icons.shopping_bag,
-              onTap: () {
-               Navigator.push(context, MaterialPageRoute(builder: (context)=>const AccesoryManagement()));
-              },
-            ),
-            const SizedBox(height: 16),
-            _buildActionButton(
-              label: 'Add Food Product',
-              color: Colors.grey,
-              icon: Icons.fastfood,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const FoodManagement()));
-              },
-            ),
-                 const SizedBox(height: 16),
-             _buildActionButton(
-              label: 'Breed Session',
-              color: Colors.grey,
-              icon: Icons.pets,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const PetBreed()));
-                // Navigate to Add Accessories Product page
-              },
-            ),
-             const SizedBox(height: 16),
-             _buildActionButton(
-              label: 'Pet product Detail',
-              color: Colors.grey,
-              icon: Icons.details,
-              onTap: () {
-               
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const PetDetail()));
-              },
-            ),
-             const SizedBox(height: 16),
-             _buildActionButton(
-              label: 'Accesories Detail',
-              color: Colors.grey,
-              icon: Icons.shop_two,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>AccessoryList()));
-                // Navigate to Add Accessories Product page
-              },
-            ),
-             const SizedBox(height: 16),
-             _buildActionButton(
-              label: 'Food Detail',
-              color: Colors.grey,
-              icon: Icons.food_bank_outlined,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodProductDetail()));
-                // Navigate to Add Accessories Product page
-              },
-            ),
-         
-
-              const SizedBox(height: 16),
-             _buildActionButton(
-              label: 'Breed Detail',
-              color: Colors.grey,
-              icon: Icons.pets,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>BreedDetail()));
-                // Navigate to Add Accessories Product page
-              },
-            ),
-          ],
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // Two columns for a balanced layout
+            crossAxisSpacing: 16, // Space between columns
+            mainAxisSpacing: 16, // Space between rows
+            childAspectRatio: 1.5, // Aspect ratio for each button (adjust as needed)
+          ),
+          itemCount: 8, // Number of items in the grid
+          itemBuilder: (context, index) {
+            switch (index) {
+              case 0:
+                return _buildActionButton(
+                  label: 'Add Pet Product',
+                  color: Colors.grey,
+                  icon: Icons.pets,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AddProduct()));
+                  },
+                );
+              case 1:
+                return _buildActionButton(
+                  label: 'Add Accessories Product',
+                  color: Colors.grey,
+                  icon: Icons.shopping_bag,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AccesoryManagement()));
+                  },
+                );
+              case 2:
+                return _buildActionButton(
+                  label: 'Add Food Product',
+                  color: Colors.grey,
+                  icon: Icons.fastfood,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const FoodManagement()));
+                  },
+                );
+              case 3:
+                return _buildActionButton(
+                  label: 'Breed Session',
+                  color: Colors.grey,
+                  icon: Icons.pets,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PetBreed()));
+                  },
+                );
+              case 4:
+                return _buildActionButton(
+                  label: 'Pet Product Detail',
+                  color: Colors.grey,
+                  icon: Icons.details,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PetDetail()));
+                  },
+                );
+              case 5:
+                return _buildActionButton(
+                  label: 'Accessories Detail',
+                  color: Colors.grey,
+                  icon: Icons.shop_two,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => AccessoryList()));
+                  },
+                );
+              case 6:
+                return _buildActionButton(
+                  label: 'Food Detail',
+                  color: Colors.grey,
+                  icon: Icons.food_bank_outlined,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const FoodProductDetail()));
+                  },
+                );
+              case 7:
+                return _buildActionButton(
+                  label: 'Breed Detail',
+                  color: Colors.grey,
+                  icon: Icons.pets,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const BreedDetail()));
+                  },
+                );
+              default:
+                return const SizedBox.shrink();
+            }
+          },
         ),
       ),
     );
@@ -129,7 +124,6 @@ class _ProductViewState extends State<ProductView> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 60,
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(12),
@@ -141,24 +135,27 @@ class _ProductViewState extends State<ProductView> {
             ),
           ],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: Colors.white,
-              size: 24,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: const TextStyle(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
                 color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+                size: 30,
               ),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

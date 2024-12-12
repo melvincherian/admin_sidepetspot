@@ -19,7 +19,7 @@ class AccessoriesBloc extends Bloc<AccessoriesEvent, AccessoriesState> {
     // on<UpdateAccessoriesEvent>(_onUpdateAccessories);
     // on<DeleteAccesoriesEvent>(_onDeleteAccessories);
   }
-
+  
   Future<void> _onAddAccessories(
       AddAccessoriesevent event, Emitter<AccessoriesState> emit) async {
     emit(AccessoriesLoading());

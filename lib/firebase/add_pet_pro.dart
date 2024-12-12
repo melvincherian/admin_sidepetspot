@@ -37,16 +37,20 @@ class ProductRepository {
     }
   }
 
-  Future<void> updateProduct(
-      String productId, petProductModel updateProduct) async {
-    try {
-      await _firestore
-          .collection('products')
-          .doc(productId)
-          .update(updateProduct.toJson());
-    } catch (e) {
-      print('Error updating product: $e');
-    }
+  // Future<void> updateProduct(
+  //     String productId, petProductModel updateProduct) async {
+  //   try {
+  //     await _firestore
+  //         .collection('products')
+  //         .doc(productId)
+  //         .update(updateProduct.toJson());
+  //   } catch (e) {
+  //     print('Error updating product: $e');
+  //   }
+  // }
+   Future<void> updateProduct(petProductModel productId) async {
+    final docRef = FirebaseFirestore.instance.collection('products').doc(productId.id);
+    await docRef.update(productId.toJson()); // Update existing product
   }
 
   Future<void> deleteProduct(String productId) async {

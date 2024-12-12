@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:petspot_admin_side/bloc/addpetproduct_bloc.dart';
 import 'package:petspot_admin_side/bloc/multipleimage_bloc.dart';
 import 'package:petspot_admin_side/infrastructure/models/pet_add_model.dart';
+import 'package:petspot_admin_side/presentation/screens/productmanagement/product_view.dart';
 import 'package:petspot_admin_side/presentation/widgets/pet_add_widget.dart';
 import 'package:petspot_admin_side/presentation/widgets/pet_textfield_desc.dart';
 import 'package:petspot_admin_side/services/image_store.dart';
@@ -210,6 +211,8 @@ class _AddProductState extends State<AddProduct> {
                       );
                        
                       context.read<AddpetproductBloc>().add(AddproductEvent(petProduct));
+                      multipleImageBloc.add(ClearImagesEvent());
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductView()));
                     }
                   },
                   style: ElevatedButton.styleFrom(

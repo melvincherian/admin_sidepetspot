@@ -11,3 +11,5 @@ class UploadImagesToCloudinaryEvent extends MultipleimageEvent {
 
   UploadImagesToCloudinaryEvent(this.images);
 } 
+
+class ClearImagesEvent extends MultipleimageEvent {}

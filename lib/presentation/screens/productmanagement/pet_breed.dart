@@ -4,8 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:petspot_admin_side/bloc/breed_bloc.dart';
-import 'package:petspot_admin_side/bloc/multipleimage_bloc.dart';
+import 'package:petspot_admin_side/bloc/breedimagebloc_bloc.dart';
 import 'package:petspot_admin_side/infrastructure/models/breed_model.dart';
+import 'package:petspot_admin_side/presentation/screens/productmanagement/product_view.dart';
 import 'package:petspot_admin_side/presentation/widgets/breed_textfield.dart';
 import 'package:petspot_admin_side/presentation/widgets/pet_textfield_desc.dart';
 import 'package:petspot_admin_side/services/image_store.dart';
@@ -21,6 +22,15 @@ class PetBreed extends StatefulWidget {
 class _PetBreedState extends State<PetBreed> {
   String? selectedCategory;
   List<String> categories = [];
+  // int? selectedMonth;
+  // int? selectedYear;
+  // String? gender;
+
+  // List<String> genders = ['Male', 'Female'];
+
+  // List<int> arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+  // List<int> year = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   @override
   void initState() {
@@ -40,6 +50,24 @@ class _PetBreedState extends State<PetBreed> {
     }
   }
 
+  Future<String?> _fetchCategoryId(String categoryName) async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('categories')
+          .where('name', isEqualTo: categoryName)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first.id;
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching category ID: $e');
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final nameController = TextEditingController();
@@ -48,6 +76,11 @@ class _PetBreedState extends State<PetBreed> {
     final sizeController = TextEditingController();
     final careController = TextEditingController();
     final priceController = TextEditingController();
+    final ageController=TextEditingController();
+    final genderController=TextEditingController();
+    final stockController=TextEditingController();
+    
+    // final ageController=TextEditingController();
     final _formKey = GlobalKey<FormState>();
 
     return Scaffold(
@@ -68,6 +101,7 @@ class _PetBreedState extends State<PetBreed> {
               sizeController.clear();
               careController.clear();
               priceController.clear();
+              // ageController.clear();
             }
           },
           child: SingleChildScrollView(
@@ -88,11 +122,11 @@ class _PetBreedState extends State<PetBreed> {
                   const SizedBox(height: 20),
                   GestureDetector(
                     onTap: () => context
-                        .read<MultipleimageBloc>()
-                        .add(MultiPickImageEvent()),
-                    child: BlocBuilder<MultipleimageBloc, MultipleimageState>(
+                        .read<BreedimageblocBloc>()
+                        .add(BreedImagepicker()),
+                    child: BlocBuilder<BreedimageblocBloc, BreedimageblocState>(
                       builder: (context, state) {
-                        if (state is MultipleImagesuccess) {
+                        if (state is BreedImageSuccess) {
                           return GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -113,7 +147,7 @@ class _PetBreedState extends State<PetBreed> {
                               );
                             },
                           );
-                        } else if (state is MultipleImageFailure) {
+                        } else if (state is BreedImageFailure) {
                           return Text(
                             state.errormessage,
                             style: const TextStyle(color: Colors.red),
@@ -158,7 +192,7 @@ class _PetBreedState extends State<PetBreed> {
                                       ))
                                   .toList(),
                               onChanged: (value) {
-                                // selectedCategory=value!;
+                                selectedCategory = value!;
                                 // setState(() {
                                 //   selectedCategory = value!;
                                 // });
@@ -179,7 +213,12 @@ class _PetBreedState extends State<PetBreed> {
                           //   validationMessage: 'Please Enter Category',
                           // ),
                           const SizedBox(height: 16),
-                          CustomDescriptionTextField(controller: descriptionController, label: 'Description', validationMessage: 'Please Enter Description',keyboardType: TextInputType.multiline,),
+                          CustomDescriptionTextField(
+                            controller: descriptionController,
+                            label: 'Description',
+                            validationMessage: 'Please Enter Description',
+                            keyboardType: TextInputType.multiline,
+                          ),
                           // BreedTextField(
                           //   controller: descriptionController,
                           //   label: 'Description',
@@ -203,22 +242,128 @@ class _PetBreedState extends State<PetBreed> {
                             label: 'Price',
                             validationMessage: 'Please Enter Price',
                           ),
+                           BreedTextField(
+                            controller: ageController,
+                            label: 'Age',
+                            validationMessage: 'Please Enter Month',
+                          ),
+                           BreedTextField(
+                            controller: genderController,
+                            label: 'Gender',
+                            validationMessage: 'Please Enter Gender',
+                          ),
+                             BreedTextField(
+                            controller: stockController,
+                            label: 'Stock',
+                            validationMessage: 'Please Enter Stock',
+                          ),
+                          
+                      //       Padding(
+                      //       padding: const EdgeInsets.symmetric(
+                      //           vertical: 8.0, horizontal: 16.0),
+                      //       child: DropdownButtonFormField<int>(
+                      //         value: selectedMonth,
+                      //         items: arr
+                      //             .map((arr) => DropdownMenuItem<int>(
+                      //                   value: arr,
+                      //                   child: Text(arr.toString()),
+                      //                 ))
+                      //             .toList(),
+                      //         onChanged: (value) {
+                      //           selectedMonth = value!;
+                      //           // setState(() {
+                      //           //   selectedCategory = value!;
+                      //           // });
+                      //         },
+                      //         decoration: const InputDecoration(
+                      //           labelText: 'Month',
+                      //           border: OutlineInputBorder(),
+                      //         ),
+                      //         validator: (value){
+                      //           if(value==null){
+                      //             return 'Please select month';
+                      //           }
+                      //           return null;
+                      //         }
+                      //       ),
+                      //     ),
+                      //   // year session
+                      //      Padding(
+                      //       padding: const EdgeInsets.symmetric(
+                      //           vertical: 8.0, horizontal: 16.0),
+                      //       child: DropdownButtonFormField<int>(
+                      //         value: selectedYear,
+                      //         items: year
+                      //             .map((year) => DropdownMenuItem<int>(
+                      //                   value: year,
+                      //                   child: Text(year.toString()),
+                      //                 ))
+                      //             .toList(),
+                      //         onChanged: (value) {
+                      //           selectedYear = value!;
+                      //           // setState(() {
+                      //           //   selectedCategory = value!;
+                      //           // });
+                      //         },
+                      //         decoration: const InputDecoration(
+                      //           labelText: 'Year',
+                      //           border: OutlineInputBorder(),
+                      //         ),
+                      //         validator: (value){
+                      //           if(value==null){
+                      //             return 'Please select year';
+                      //           }
+                      //           return null;
+                      //         }
+                      //       ),
+                      //     ),
+
+                      //     /// gender session
+                          
+                      
+                      //  Padding(
+                      //       padding: const EdgeInsets.symmetric(
+                      //           vertical: 8.0, horizontal: 16.0),
+                      //       child: DropdownButtonFormField<String>(
+                      //         value: gender,
+                      //         items: genders
+                      //             .map((genders) => DropdownMenuItem<String>(
+                      //                   value: genders,
+                      //                   child: Text(genders),
+                      //                 ))
+                      //             .toList(),
+                      //         onChanged: (value) {
+                      //           gender = value!;
+                      //           // setState(() {
+                      //           //   selectedCategory = value!;
+                      //           // });
+                      //         },
+                      //         decoration: const InputDecoration(
+                      //           labelText: 'Gender',
+                      //           border: OutlineInputBorder(),
+                      //         ),
+                      //         validator: (value) =>
+                      //             value == null || value.isEmpty
+                      //                 ? 'Please select a gender'
+                      //                 : null,
+                      //       ),
+                      //     ),
+                    // added new code
                         ],
                       ),
                     ),
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton(
-                    onPressed: ()async {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                           
-                            final multipleImageBloc =
-                            context.read<MultipleimageBloc>();
-                        final imageState = multipleImageBloc.state;
+                        final breedimage =
+                            context.read<BreedimageblocBloc>();
+                        final imageState = breedimage.state;
 
                         List<String> imageUrls = [];
 
-                        if (imageState is MultipleImagesuccess) {
+                        if (imageState is BreedImageSuccess) {
                           // Loop through each selected image and upload it to Cloudinary
                           for (var image in imageState.images) {
                             final imageUrl =
@@ -229,22 +374,47 @@ class _PetBreedState extends State<PetBreed> {
                           }
                         }
 
+                        final categoryId =
+                            await _fetchCategoryId(selectedCategory!);
+                        final categorySnapshot = await FirebaseFirestore
+                            .instance
+                            .collection('categories')
+                            .doc(categoryId)
+                            .get();
+
                         final breedModel = BreedModel(
-                          id: '', // Replace with a unique ID if needed
-                          name: nameController.text,
-                          category: selectedCategory??'',
-                          // description: descriptionController.text,
-                          descriptions: [descriptionController.text],
-                          size: sizeController.text,
-                          careRequirements: careController.text,
-                          price: double.tryParse(priceController.text) ?? 0,
-                          // priceRange: priceController.text,
-                          imageUrls: imageUrls,
-                              // Update to include image URLs when saving to Firebase
-                        );
+                            id: DateTime.now()
+                                .millisecondsSinceEpoch
+                                .toString(), // Replace with a unique ID if needed
+                            name: nameController.text,
+                            categoryDetails: {
+                              'id': categoryId,
+                              'name': categorySnapshot.data()?['name'],
+                            },
+                            categoryId: categoryId ?? '',
+                            // description: descriptionController.text,
+                            descriptions: [descriptionController.text],
+                            size: sizeController.text,
+                            careRequirements: careController.text,
+                            price: double.tryParse(priceController.text) ?? 0,
+                            // priceRange: priceController.text,
+                            imageUrls: imageUrls,
+                            // month: selectedMonth ?? 0,
+
+                            // year: selectedYear ?? 0,
+                            gender: genderController.text,
+                            age: int.tryParse(ageController.text)??0,
+                            stock: int.tryParse(stockController.text)??0,
+                            
+                            // age: int.tryParse(monthController.text) ??0,
+
+                            // Update to include image URLs when saving to Firebase
+                            );
                         context
                             .read<BreedBloc>()
                             .add(AddBreedEvent(breedModel));
+                              // Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductView()));
+                        breedimage.add(ClearImagesEvent());
                         // Handle form submission
                       }
                     },

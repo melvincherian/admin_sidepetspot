@@ -3,9 +3,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:petspot_admin_side/bloc/foodimage_bloc.dart';
 import 'package:petspot_admin_side/bloc/foodproduct_bloc.dart';
-import 'package:petspot_admin_side/bloc/multipleimage_bloc.dart';
+
 import 'package:petspot_admin_side/infrastructure/models/food_product_model.dart';
+import 'package:petspot_admin_side/presentation/screens/productmanagement/product_view.dart';
 
 import 'package:petspot_admin_side/presentation/widgets/pet_add_widget.dart';
 import 'package:petspot_admin_side/presentation/widgets/pet_textfield_desc.dart';
@@ -37,6 +39,24 @@ class _FoodManagementState extends State<FoodManagement> {
       });
     } catch (e) {
       print('Error fetching categories: $e');
+    }
+  }
+
+  Future<String?> _fetchCategoryId(String categoryName) async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('categories')
+          .where('name', isEqualTo: categoryName)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first.id;
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching category ID: $e');
+      return null;
     }
   }
 
@@ -95,11 +115,11 @@ class _FoodManagementState extends State<FoodManagement> {
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () => context
-                      .read<MultipleimageBloc>()
-                      .add(MultiPickImageEvent()),
-                  child: BlocBuilder<MultipleimageBloc, MultipleimageState>(
+                      .read<FoodimageBloc>()
+                      .add(FoodImagePicker()),
+                  child: BlocBuilder<FoodimageBloc, FoodimageState>(
                     builder: (context, state) {
-                      if (state is MultipleImagesuccess) {
+                      if (state is FoodImageSuccess) {
                         return GridView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
@@ -120,7 +140,7 @@ class _FoodManagementState extends State<FoodManagement> {
                             );
                           },
                         );
-                      } else if (state is MultipleImageFailure) {
+                      } else if (state is FoodImageFailure) {
                         return Text(
                           state.errormessage,
                           style: const TextStyle(color: Colors.red),
@@ -181,7 +201,11 @@ class _FoodManagementState extends State<FoodManagement> {
                 //     controller: descriptionController,
                 //     label: 'Description',
                 //     validationMessage: 'Please Enter Description'),
-                CustomDescriptionTextField(controller: descriptionController, label: 'Description', validationMessage: 'Please Enter Description', keyboardType: TextInputType.multiline),
+                CustomDescriptionTextField(
+                    controller: descriptionController,
+                    label: 'Description',
+                    validationMessage: 'Please Enter Description',
+                    keyboardType: TextInputType.multiline),
                 CustomTextField(
                     controller: priceController,
                     label: 'Price',
@@ -218,13 +242,13 @@ class _FoodManagementState extends State<FoodManagement> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        final multipleImageBloc =
-                            context.read<MultipleimageBloc>();
-                        final imageState = multipleImageBloc.state;
+                        final foodimage =
+                            context.read<FoodimageBloc>();
+                        final imageState = foodimage.state;
 
                         List<String> imageUrls = [];
 
-                        if (imageState is MultipleImagesuccess) {
+                        if (imageState is FoodImageSuccess) {
                           // Loop through each selected image and upload it to Cloudinary
                           for (var image in imageState.images) {
                             final imageUrl =
@@ -235,24 +259,47 @@ class _FoodManagementState extends State<FoodManagement> {
                           }
                         }
 
+                        final categoryId =
+                            await _fetchCategoryId(selectedCategory!);
+                        final categorySnapshot = await FirebaseFirestore
+                            .instance
+                            .collection('categories')
+                            .doc(categoryId)
+                            .get();
+
                         final product = FoodProductModel(
-                            id: 'id',
-                            foodname: nameController.text,
-                            category: selectedCategory ?? '',
-                            // description: descriptionController.text,
-                            descriptions: [descriptionController.text],
-                            price: double.tryParse(priceController.text) ?? 0,
-                            stock: int.parse(stockController.text),
-                            foodweight: weightController.text,
-                            packedDate: startdateConroller.text,
-                            endDate: enddateConroller.text,
-                            imageUrls: imageUrls);
+                          id:  DateTime.now()
+                              .millisecondsSinceEpoch
+                              .toString(),
+                          foodname: nameController.text,
+                          // category: selectedCategory ?? '',
+                          // description: descriptionController.text,
+                          descriptions: [descriptionController.text],
+                          price: double.tryParse(priceController.text) ?? 0,
+                          stock: int.parse(stockController.text),
+                          foodweight: weightController.text,
+                          packedDate: startdateConroller.text,
+                          endDate: enddateConroller.text,
+                          imageUrls: imageUrls,
+                          categoryId: categoryId ?? '',
+                          categoryDetails: {
+                            'id': categoryId,
+                            'name': categorySnapshot.data()?['name'],
+                          },
+                        );
                         context
                             .read<FoodproductBloc>()
                             .add(AddfoodEvent(product));
 
+                            foodimage.add(ClearImagesEvent());
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductView()));
+                            
+
+                        // FoodimageBloc.add(ClearImagesEvent());
+
                         // Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodProductDetailsScreen(foodProduct: product)));
                       }
+                    
                     },
                     child: const Text(
                       'Save',

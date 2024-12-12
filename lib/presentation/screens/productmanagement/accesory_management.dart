@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:petspot_admin_side/bloc/accesoryimage_bloc.dart';
 import 'package:petspot_admin_side/bloc/accessories_bloc.dart';
-import 'package:petspot_admin_side/bloc/multipleimage_bloc.dart';
 import 'package:petspot_admin_side/infrastructure/models/product_accessories_model.dart';
+import 'package:petspot_admin_side/presentation/screens/productmanagement/product_view.dart';
 import 'package:petspot_admin_side/presentation/widgets/pet_add_widget.dart';
 import 'package:petspot_admin_side/presentation/widgets/pet_textfield_desc.dart';
 import 'package:petspot_admin_side/services/image_store.dart';
@@ -45,6 +46,25 @@ class _AccesoryManagementState extends State<AccesoryManagement> {
       print('Error fetching categories: $e');
     }
   }
+
+    Future<String?> _fetchCategoryId(String categoryName) async {
+  try {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('categories')
+        .where('name', isEqualTo: categoryName)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.id;
+    }
+    return null;
+  } catch (e) {
+    print('Error fetching category ID: $e');
+    return null;
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -91,11 +111,11 @@ class _AccesoryManagementState extends State<AccesoryManagement> {
                   const SizedBox(height: 20),
                   GestureDetector(
                     onTap: () => context
-                        .read<MultipleimageBloc>()
-                        .add(MultiPickImageEvent()),
-                    child: BlocBuilder<MultipleimageBloc, MultipleimageState>(
+                        .read<AccesoryimageBloc>()
+                        .add(AccesoryImagepicker()),
+                    child: BlocBuilder<AccesoryimageBloc, AccesoryimageState>(
                       builder: (context, state) {
-                        if (state is MultipleImagesuccess) {
+                        if (state is AccessoryImageSuccess) {
                           return GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -116,7 +136,7 @@ class _AccesoryManagementState extends State<AccesoryManagement> {
                               );
                             },
                           );
-                        } else if (state is MultipleImageFailure) {
+                        } else if (state is AccessoryImageFailure) {
                           return Text(
                             state.errormessage,
                             style: const TextStyle(color: Colors.red),
@@ -192,13 +212,13 @@ class _AccesoryManagementState extends State<AccesoryManagement> {
                   ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          final multipleImageBloc =
-                              context.read<MultipleimageBloc>();
-                          final imageState = multipleImageBloc.state;
+                          final accesoryimage =
+                              context.read<AccesoryimageBloc>();
+                          final imageState = accesoryimage.state;
  
                           List<String> imageUrls = [];
 
-                          if (imageState is MultipleImagesuccess) {
+                          if (imageState is AccessoryImageSuccess) {
                             // Loop through each selected image and upload it to Cloudinary
                             for (var image in imageState.images) {
                               final imageUrl =
@@ -208,11 +228,17 @@ class _AccesoryManagementState extends State<AccesoryManagement> {
                               }
                             }
                           }
+                                                    final categoryId = await _fetchCategoryId(selectedCategory!);
+                              final categorySnapshot = await FirebaseFirestore.instance
+    .collection('categories')
+    .doc(categoryId)
+    .get();
+
 
                           final accessory = ProductAccessoriesModel(
                             id: DateTime.now().millisecondsSinceEpoch.toString(), // Generate a unique ID here
                             accesoryname: nameController.text,
-                            category: selectedCategory!,
+                            // category: selectedCategory!,
                             imageUrls:
                                 imageUrls, // Add logic to handle image URL
                             // description: descriptionController.text,
@@ -221,11 +247,19 @@ class _AccesoryManagementState extends State<AccesoryManagement> {
                             size: sizeController.text,
                             stock: int.parse(stockController.text),
                             petType: petTypeController.text,
+                               categoryDetails: {
+                            'id':categoryId,
+                            'name':categorySnapshot.data()?['name'],
+                          },
+                          categoryId: categoryId??'',
                           );
 
                           context
                               .read<AccessoriesBloc>()
                               .add(AddAccessoriesevent(accessory));
+                              accesoryimage.add(ClearImagesEvent());
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductView()));
+                              
                         }
                       },
                       style: ElevatedButton.styleFrom(

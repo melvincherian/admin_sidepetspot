@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:petspot_admin_side/infrastructure/models/breed_model.dart';
+import 'package:petspot_admin_side/presentation/screens/edit_breed.dart';
 
 
 class BreedDetail extends StatelessWidget {
@@ -106,9 +107,9 @@ class BreedDetail extends StatelessWidget {
                                 style: const TextStyle(
                                     fontSize: 14, color: Colors.black54),
                               ),
-                                if (breeds.category.isNotEmpty)
+                                if (breeds.categoryId.isNotEmpty)
                               Text(
-                                'Category: ${breeds.category}',
+                                'Category: ${breeds.categoryId}',
                                 style: const TextStyle(
                                     fontSize: 14, color: Colors.black54),
                               ),
@@ -143,7 +144,7 @@ class BreedDetail extends StatelessWidget {
                           children: [
                             IconButton(
                               onPressed: () {
-                                // Navigator.push(context, MaterialPageRoute(builder: (context)=>EditBreed(petbreed: petbreed,)));
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>EditBreed(petbreed: breeds)));
                               },
                               icon: const Icon(
                                 Icons.edit,

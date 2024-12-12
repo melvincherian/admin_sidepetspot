@@ -1,13 +1,20 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:petspot_admin_side/bloc/accesoryimage_bloc.dart';
 import 'package:petspot_admin_side/bloc/accessories_bloc.dart';
 import 'package:petspot_admin_side/bloc/addpetproduct_bloc.dart';
 import 'package:petspot_admin_side/bloc/breed_bloc.dart';
+import 'package:petspot_admin_side/bloc/breedimagebloc_bloc.dart';
 import 'package:petspot_admin_side/bloc/category_bloc.dart';
+import 'package:petspot_admin_side/bloc/editaccesoryimage_bloc.dart';
+import 'package:petspot_admin_side/bloc/editimage_bloc.dart';
+import 'package:petspot_admin_side/bloc/foodeditimage_bloc.dart';
+import 'package:petspot_admin_side/bloc/foodimage_bloc.dart';
 import 'package:petspot_admin_side/bloc/foodproduct_bloc.dart';
 import 'package:petspot_admin_side/bloc/imagepicker_bloc.dart';
 import 'package:petspot_admin_side/bloc/multipleimage_bloc.dart';
+import 'package:petspot_admin_side/bloc/peteditimage_bloc.dart';
 import 'package:petspot_admin_side/firebase/accesory_product.dart';
 import 'package:petspot_admin_side/firebase/add_pet_pro.dart';
 import 'package:petspot_admin_side/firebase/breed_session.dart';
@@ -52,7 +59,15 @@ class MyApp extends StatelessWidget {
         ),
          BlocProvider(
           create: (context)=>MultipleimageBloc()
-        )
+        ),
+        BlocProvider(create: (context)=>AccesoryimageBloc()),
+        BlocProvider(create: (context)=>BreedimageblocBloc()),
+        BlocProvider(create: (context)=>FoodimageBloc()),
+        BlocProvider(create: (context)=>EditimageBloc()),
+        BlocProvider(create: (context)=>EditaccesoryimageBloc()),
+        BlocProvider(create: (context)=>FoodeditimageBloc()),
+        BlocProvider(create: (context)=>PeteditimageBloc()),
+       
 
       ],
       child: MaterialApp(

@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:petspot_admin_side/infrastructure/models/food_product_model.dart';
+import 'package:petspot_admin_side/presentation/screens/edit_food.dart';
 
 class FoodProductDetail extends StatelessWidget {
   const FoodProductDetail({super.key});
@@ -100,9 +101,9 @@ class FoodProductDetail extends StatelessWidget {
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (foods.category.isNotEmpty)
+                            if (foods.categoryId.isNotEmpty)
                               Text(
-                                'Category: ${foods.category}',
+                                'Category: ${foods.categoryId}',
                                 style: const TextStyle(
                                     fontSize: 14, color: Colors.black54),
                               ),
@@ -147,7 +148,9 @@ class FoodProductDetail extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>EditFood(foodproduct: foods)));
+                              },
                               icon: const Icon(
                                 Icons.edit,
                                 color: Colors.blue,

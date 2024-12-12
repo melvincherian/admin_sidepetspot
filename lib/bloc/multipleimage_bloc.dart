@@ -27,6 +27,9 @@ class MultipleimageBloc extends Bloc<MultipleimageEvent, MultipleimageState> {
         emit(MultipleImageFailure("Failed to pick images: ${e.toString()}"));
       }
     });
-    
+    on<ClearImagesEvent>((event, emit) {
+      emit(MultipleimageInitial());
+    });
   }
-}
+  }
+

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:petspot_admin_side/infrastructure/models/pet_add_model.dart';
+import 'package:petspot_admin_side/presentation/screens/edit_pet_product.dart';
 
 class PetDetail extends StatelessWidget {
   const PetDetail({super.key});
@@ -28,7 +29,7 @@ class PetDetail extends StatelessWidget {
             }
 
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return const Center(child: Text('No accessories available'));
+              return const Center(child: Text('No pets available'));
             }
 
             final pet = snapshot.data!.docs.map((doc) {
@@ -37,7 +38,7 @@ class PetDetail extends StatelessWidget {
                 doc.id,
               );
             }).toList();
-
+             
             return ListView.builder(
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
                 itemCount: pet.length,
@@ -134,7 +135,9 @@ class PetDetail extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>EditPetProduct(petproduct: pets)));
+                              },
                               icon: const Icon(
                                 Icons.edit,
                                 color: Colors.blue,
@@ -150,9 +153,9 @@ class PetDetail extends StatelessWidget {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
-                                      title: const Text('Delete Accessory'),
+                                      title: const Text('Delete Pet'),
                                       content: const Text(
-                                          'Are you sure you want to delete this accessory?'),
+                                          'Are you sure you want to delete this pet?'),
                                       actions: [
                                         TextButton(
                                           onPressed: () =>

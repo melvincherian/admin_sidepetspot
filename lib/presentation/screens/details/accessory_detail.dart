@@ -103,9 +103,9 @@ class AccessoryList extends StatelessWidget {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (accessory.category.isNotEmpty)
+                        if (accessory.categoryId.isNotEmpty)
                           Text(
-                            'Category: ${accessory.category}',
+                            'Category: ${accessory.categoryId}',
                             style: const TextStyle(
                                 fontSize: 14, color: Colors.black54),
                           ),

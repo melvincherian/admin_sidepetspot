@@ -18,9 +18,10 @@ final ProductRepository productRepository;
 //   // Expose the stream to listen to it
 //   Stream<petProductModel> get addedProductStream => _addedProductController.stream;
 
-
+  
   AddpetproductBloc({required this.productRepository}) : super(AddpetproductInitial()) {
     on<AddproductEvent>(_onAddPetProduct);
+    on<UpdateProductEvent>(_onUpdatePetProduct);
      
     }
 
@@ -33,5 +34,15 @@ final ProductRepository productRepository;
         emit(ProductError('Failed to add pet products$e'));
        }
     }
+    Future<void> _onUpdatePetProduct(UpdateProductEvent event, Emitter<AddpetproductState> emit) async {
+    emit(ProductLoading());
+    try {
+      await productRepository.updateProduct(event.productModel); // Implement update logic in repository
+      emit(AddpetproductSuccess());
+    } catch (e) {
+      emit(ProductError('Failed to update pet products: $e'));
+    }
+  }
+    
   }
 
