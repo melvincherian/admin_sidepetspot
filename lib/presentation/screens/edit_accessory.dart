@@ -16,6 +16,25 @@ class EditAccessory extends StatefulWidget {
 }
 
 class _EditAccessoryState extends State<EditAccessory> {
+  List<String> categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCategories();
+  }
+
+  Future<void> fetchCategories() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance.collection('categories').get();
+      setState(() {
+        categories = snapshot.docs.map((doc) => doc['name'] as String).toList();
+      });
+    } catch (e) {
+      debugPrint('Error fetching categories: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final nameController =
@@ -32,24 +51,6 @@ class _EditAccessoryState extends State<EditAccessory> {
     final petTypeController =
         TextEditingController(text: widget.accessory.petType);
 
-//         Future<String?> _fetchCategoryId(String categoryName) async {
-//   try {
-//     final querySnapshot = await FirebaseFirestore.instance
-//         .collection('categories')
-//         .where('name', isEqualTo: categoryName)
-//         .limit(1)
-//         .get();
-
-//     if (querySnapshot.docs.isNotEmpty) {
-//       return querySnapshot.docs.first.id;
-//     }
-//     return null;
-//   } catch (e) {
-//     print('Error fetching category ID: $e');
-//     return null;
-//   }
-// }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -61,7 +62,7 @@ class _EditAccessoryState extends State<EditAccessory> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(17),
+          padding: const EdgeInsets.all(17),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -69,7 +70,8 @@ class _EditAccessoryState extends State<EditAccessory> {
                 onTap: () => context
                     .read<EditaccesoryimageBloc>()
                     .add(EditAccessoryImagePicker()),
-                child: BlocBuilder<EditaccesoryimageBloc, EditaccesoryimageState>(
+                child:
+                    BlocBuilder<EditaccesoryimageBloc, EditaccesoryimageState>(
                   builder: (context, state) {
                     if (state is EditaccessoryImageSuccess) {
                       return GridView.builder(
@@ -77,7 +79,7 @@ class _EditAccessoryState extends State<EditAccessory> {
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3, // Number of images per row
+                          crossAxisCount: 3,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
                         ),
@@ -113,13 +115,26 @@ class _EditAccessoryState extends State<EditAccessory> {
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(
-                  labelText: 'Acccesory Name',
+                  labelText: 'Accessory Name',
                   border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16),
-              TextField(
-                controller: categoryController,
+              DropdownButtonFormField<String>(
+                value: categories.contains(categoryController.text)
+                    ? categoryController.text
+                    : null,
+                onChanged: (value) {
+                  setState(() {
+                    categoryController.text = value!;
+                  });
+                },
+                items: categories.map((category) {
+                  return DropdownMenuItem<String>(
+                    value: category,
+                    child: Text(category),
+                  );
+                }).toList(),
                 decoration: const InputDecoration(
                   labelText: 'Category',
                   border: OutlineInputBorder(),
@@ -161,81 +176,58 @@ class _EditAccessoryState extends State<EditAccessory> {
               TextField(
                 controller: petTypeController,
                 decoration: const InputDecoration(
-                  labelText: 'PetType',
+                  labelText: 'Pet Type',
                   border: OutlineInputBorder(),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                   onPressed: () async {
-                       final breedimage =
-                            context.read<EditaccesoryimageBloc>();
-                        final imageState = breedimage.state;
+                    final breedImageBloc =
+                        context.read<EditaccesoryimageBloc>();
+                    final imageState = breedImageBloc.state;
 
-                        List<String> imageUrls = [];
+                    List<String> imageUrls = [];
 
-                        if (imageState is EditaccessoryImageSuccess) {
-                          // Loop through each selected image and upload it to Cloudinary
-                          for (var image in imageState.images) {
-                            final imageUrl =
-                                await CloudinaryService.uploadImage(image);
-                            if (imageUrl != null) {
-                              imageUrls.add(imageUrl);
-                            }
-                          }
+                    if (imageState is EditaccessoryImageSuccess) {
+                      for (var image in imageState.images) {
+                        final imageUrl =
+                            await CloudinaryService.uploadImage(image);
+                        if (imageUrl != null) {
+                          imageUrls.add(imageUrl);
                         }
-
-
-
-                    if (nameController.text.isEmpty ||
-                        categoryController.text.isEmpty ||
-                        DescriptionController.text.isEmpty ||
-                        SizeController.text.isEmpty ||
-                        stockController.text.isEmpty ||
-                        priceController.text.isEmpty ||
-                        petTypeController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text('Please enter all fields')));
-                      return;
+                      }
                     }
-                    //  final updatedAccesoy=ProductAccessoriesModel(
-                    //   id: widget.accessory.id,
-                    //   accesoryname: widget.accessory.accesoryname,
-                    //   category: widget.accessory.category,
-                    //   imageUrls: widget.accessory.imageUrls,
-                    //   descriptions: widget.accessory.descriptions,
-                    //   price: widget.accessory.price,
-                    //   size: widget.accessory.size,
-                    //   stock: widget.accessory.stock,
-                    //   petType: widget.accessory.petType,
 
+                    // if (nameController.text.isEmpty ||
+                    //     categoryController.text.isEmpty ||
+                    //     DescriptionController.text.isEmpty ||
+                    //     SizeController.text.isEmpty ||
+                    //     stockController.text.isEmpty ||
+                    //     priceController.text.isEmpty ||
+                    //     petTypeController.text.isEmpty) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(
+                    //     const SnackBar(
+                    //         content: Text('Please enter all fields')),
                     //   );
-
-                    //                                                        final categoryId = await _fetchCategoryId(categoryController.text);
-                    //                           final categorySnapshot = await FirebaseFirestore.instance
-                    // .collection('categories')
-                    // .doc(categoryId)
-                    // .get();
+                    //   return;
+                    // }
 
                     final updatedAccessory = ProductAccessoriesModel(
-                      id: widget.accessory.id, // Keep the same ID
-                      accesoryname: nameController.text, // Updated name
-                      // category: categoryController.text, // Updated category
-                     imageUrls: imageUrls,// Assume images are unchanged
+                      id: widget.accessory.id,
+                      accesoryname: nameController.text,
+                      imageUrls: imageUrls,
                       descriptions: DescriptionController.text
                           .split(',')
                           .map((e) => e.trim())
-                          .toList(), // Split descriptions back into a list
-                      price: double.tryParse(priceController.text) ??
-                          0, // Safely parse price
-                      size: SizeController.text, // Updated size
-                      stock: int.tryParse(stockController.text) ??
-                          0, // Safely parse stock
+                          .toList(),
+                      price: double.tryParse(priceController.text) ?? 0,
+                      size: SizeController.text,
+                      stock: int.tryParse(stockController.text) ?? 0,
                       petType: petTypeController.text,
                       categoryId: categoryController.text,
-
-                      // Updated pet type
                     );
+
                     try {
                       await FirebaseFirestore.instance
                           .collection('accessories')
@@ -243,14 +235,18 @@ class _EditAccessoryState extends State<EditAccessory> {
                           .update(updatedAccessory.toMap());
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            backgroundColor: Colors.green,
-                            content: Text('Accessory updated successfully!')),
+                          backgroundColor: Colors.green,
+                          content: Text('Accessory updated successfully!'),
+                        ),
                       );
+
+                      breedImageBloc.add(ClearImagesEvent());
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                            backgroundColor: Colors.red,
-                            content: Text('Failed to update Accessories: $e')),
+                          backgroundColor: Colors.red,
+                          content: Text('Failed to update Accessories: $e'),
+                        ),
                       );
                     }
                   },

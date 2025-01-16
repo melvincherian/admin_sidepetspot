@@ -14,8 +14,8 @@ final Foodrepository repository;
 
   FoodproductBloc({required this.repository}) : super(FoodproductInitial()) {
     on<AddfoodEvent>(_onAddFoodproduct);
+    on<UpdateFoodEvent>(_onUpdateFoodproduct);
     
-       
     
   }
   Future<void>_onAddFoodproduct(AddfoodEvent event,Emitter<FoodproductState>emit)async{
@@ -27,4 +27,18 @@ final Foodrepository repository;
       emit(FoodProductFailure('Error adding Food Product$e'));
     }
   }
+
+
+ Future<void>_onUpdateFoodproduct(UpdateFoodEvent event,Emitter<FoodproductState>emit)async{
+    emit(FoodproductLoading());
+    try{
+      await repository.updateFoodproduct(event.foodproduct);
+      emit(FoodProductSuccess('Food Updated  Successfully'));
+    }catch(e){
+      emit(FoodProductFailure('Error Updating Food Product$e'));
+    }
+  }
+
+   
+  
 }

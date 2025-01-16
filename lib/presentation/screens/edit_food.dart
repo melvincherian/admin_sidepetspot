@@ -1,3 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:petspot_admin_side/bloc/foodeditimage_bloc.dart';
@@ -6,22 +9,46 @@ import 'package:petspot_admin_side/bloc/foodproduct_bloc.dart';
 import 'package:petspot_admin_side/infrastructure/models/food_product_model.dart';
 import 'package:petspot_admin_side/services/image_store.dart';
 
-class EditFood extends StatelessWidget {
+class EditFood extends StatefulWidget {
   final FoodProductModel foodproduct;
 
   const EditFood({super.key,required this.foodproduct});
 
   @override
+  State<EditFood> createState() => _EditFoodState();
+}
+
+class _EditFoodState extends State<EditFood> {
+
+    List<String> categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCategories();
+  }
+
+  Future<void> fetchCategories() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance.collection('categories').get();
+      setState(() {
+        categories = snapshot.docs.map((doc) => doc['name'] as String).toList();
+      });
+    } catch (e) {
+      debugPrint('Error fetching categories: $e');
+    }
+  }
+  @override
   Widget build(BuildContext context) {
 
-    final nameController=TextEditingController(text: foodproduct.foodname);
-    final categoryController=TextEditingController(text: foodproduct.categoryId);
-    final descriptionController=TextEditingController(text: foodproduct.descriptions.join(', '));
-    final priceController=TextEditingController(text: foodproduct.price.toString());
-    final stockController=TextEditingController(text: foodproduct.stock.toString());
-    final weightController=TextEditingController(text: foodproduct.foodweight);
-    final startdateController=TextEditingController(text: foodproduct.packedDate);
-    final enddateController=TextEditingController(text: foodproduct.endDate);
+    final nameController=TextEditingController(text: widget.foodproduct.foodname);
+    final categoryController=TextEditingController(text: widget.foodproduct.categoryId);
+    final descriptionController=TextEditingController(text: widget.foodproduct.descriptions.join(', '));
+    final priceController=TextEditingController(text: widget.foodproduct.price.toString());
+    final stockController=TextEditingController(text: widget.foodproduct.stock.toString());
+    final weightController=TextEditingController(text: widget.foodproduct.foodweight);
+    final startdateController=TextEditingController(text: widget.foodproduct.packedDate);
+    final enddateController=TextEditingController(text: widget.foodproduct.endDate);
 
     return  Scaffold(
        appBar: AppBar(
@@ -89,13 +116,33 @@ class EditFood extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              TextField(
-                controller: categoryController,
+               DropdownButtonFormField<String>(
+                value: categories.contains(categoryController.text)
+                    ? categoryController.text
+                    : null,
+                onChanged: (value) {
+                  setState(() {
+                    categoryController.text = value!;
+                  });
+                },
+                items: categories.map((category) {
+                  return DropdownMenuItem<String>(
+                    value: category,
+                    child: Text(category),
+                  );
+                }).toList(),
                 decoration: const InputDecoration(
                   labelText: 'Category',
                   border: OutlineInputBorder(),
                 ),
               ),
+              // TextField(
+              //   controller: categoryController,
+              //   decoration: const InputDecoration(
+              //     labelText: 'Category',
+              //     border: OutlineInputBorder(),
+              //   ),
+              // ),
               const SizedBox(height: 16),
               TextField(
                 controller: descriptionController,
@@ -144,7 +191,7 @@ class EditFood extends StatelessWidget {
                   border: OutlineInputBorder(),
                 ),
               ),
-              SizedBox(height: 20),
+           const   SizedBox(height: 20),
               ElevatedButton(onPressed: ()async{
 
 
@@ -155,7 +202,7 @@ class EditFood extends StatelessWidget {
                         List<String> imageUrls = [];
 
                         if (imageState is FoodEditImageSuccess) {
-                          // Loop through each selected image and upload it to Cloudinary
+                        
                           for (var image in imageState.images) {
                             final imageUrl =
                                 await CloudinaryService.uploadImage(image);
@@ -166,10 +213,9 @@ class EditFood extends StatelessWidget {
                         }
 
                     final updatefood=FoodProductModel(
-                      id: foodproduct.id, 
+                      id: widget.foodproduct.id, 
                       foodname: nameController.text, 
                        categoryId: categoryController.text,
-                      // category: categoryController.text, 
                       descriptions:descriptionController.text
                           .split(', ')
                           .map((e) => e.trim())
@@ -180,8 +226,16 @@ class EditFood extends StatelessWidget {
                       imageUrls: imageUrls, 
                       packedDate: startdateController.text, 
                       endDate: enddateController.text
+                      
                       );
                       context.read<FoodproductBloc>().add(UpdateFoodEvent(updatefood));
+                         Navigator.pop(context);
+                     
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          backgroundColor: Colors.green,
+                          content: Text('Food updated successfully')),
+                    );
                 
               },
                style: ElevatedButton.styleFrom(
@@ -191,7 +245,7 @@ class EditFood extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12.0),
                     ),
                   ),
-              child: Text('Update',
+              child:const Text('Update',
               style: TextStyle(color: Colors.white),
               ))
             ],

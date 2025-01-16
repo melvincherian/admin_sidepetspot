@@ -8,7 +8,7 @@ class Foodrepository {
 
   Future<void>addFoodproduct(FoodProductModel product) async {
   try {
-    await _firestore.collection('foodproducts').add(product.toJson());
+    await _firestore.collection('foodproducts').add(product.toMap());
   } catch (e) {
     print('Error adding Food accessories $e');
   }
@@ -28,7 +28,7 @@ class Foodrepository {
       await _firestore
           .collection('foodproducts')
           .doc(foodproduct.id)
-          .update(foodproduct.toJson());
+          .update(foodproduct.toMap());
     } catch (e) {
       print('Error updating food products$e');
     }

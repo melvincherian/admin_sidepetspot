@@ -13,4 +13,11 @@ class UploadImagesToCloudinaryEvent extends EditimageEvent{
   UploadImagesToCloudinaryEvent(this.images);
 } 
 
+
+class RemoveImageEvent extends EditimageEvent {
+  final int index;
+
+  RemoveImageEvent(this.index);
+}
+
 class ClearImagesEvent extends EditimageEvent {}

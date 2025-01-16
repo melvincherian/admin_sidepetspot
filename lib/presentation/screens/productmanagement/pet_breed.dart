@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:petspot_admin_side/bloc/breed_bloc.dart';
 import 'package:petspot_admin_side/bloc/breedimagebloc_bloc.dart';
 import 'package:petspot_admin_side/infrastructure/models/breed_model.dart';
-import 'package:petspot_admin_side/presentation/screens/productmanagement/product_view.dart';
 import 'package:petspot_admin_side/presentation/widgets/breed_textfield.dart';
 import 'package:petspot_admin_side/presentation/widgets/pet_textfield_desc.dart';
 import 'package:petspot_admin_side/services/image_store.dart';
@@ -22,15 +21,10 @@ class PetBreed extends StatefulWidget {
 class _PetBreedState extends State<PetBreed> {
   String? selectedCategory;
   List<String> categories = [];
-  // int? selectedMonth;
-  // int? selectedYear;
-  // String? gender;
+  final List<String> gender = ['Male', 'Female'];
 
-  // List<String> genders = ['Male', 'Female'];
-
-  // List<int> arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-
-  // List<int> year = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  final List<int> month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  final List<int> year = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   @override
   void initState() {
@@ -76,11 +70,10 @@ class _PetBreedState extends State<PetBreed> {
     final sizeController = TextEditingController();
     final careController = TextEditingController();
     final priceController = TextEditingController();
-    final ageController=TextEditingController();
-    final genderController=TextEditingController();
-    final stockController=TextEditingController();
-    
-    // final ageController=TextEditingController();
+    final stockController = TextEditingController();
+    final dropdowngenderController = TextEditingController();
+    final monthController = TextEditingController();
+    final yearController = TextEditingController();
     final _formKey = GlobalKey<FormState>();
 
     return Scaffold(
@@ -101,7 +94,9 @@ class _PetBreedState extends State<PetBreed> {
               sizeController.clear();
               careController.clear();
               priceController.clear();
-              // ageController.clear();
+              dropdowngenderController.clear();
+              monthController.clear();
+              yearController.clear();
             }
           },
           child: SingleChildScrollView(
@@ -207,11 +202,6 @@ class _PetBreedState extends State<PetBreed> {
                                       : null,
                             ),
                           ),
-                          // BreedTextField(
-                          //   controller: categoryController,
-                          //   label: 'Category',
-                          //   validationMessage: 'Please Enter Category',
-                          // ),
                           const SizedBox(height: 16),
                           CustomDescriptionTextField(
                             controller: descriptionController,
@@ -219,11 +209,6 @@ class _PetBreedState extends State<PetBreed> {
                             validationMessage: 'Please Enter Description',
                             keyboardType: TextInputType.multiline,
                           ),
-                          // BreedTextField(
-                          //   controller: descriptionController,
-                          //   label: 'Description',
-                          //   validationMessage: 'Please Enter Description',
-                          // ),
                           const SizedBox(height: 16),
                           BreedTextField(
                             controller: sizeController,
@@ -242,113 +227,109 @@ class _PetBreedState extends State<PetBreed> {
                             label: 'Price',
                             validationMessage: 'Please Enter Price',
                           ),
-                           BreedTextField(
-                            controller: ageController,
-                            label: 'Age',
-                            validationMessage: 'Please Enter Month',
-                          ),
-                           BreedTextField(
-                            controller: genderController,
-                            label: 'Gender',
-                            validationMessage: 'Please Enter Gender',
-                          ),
-                             BreedTextField(
+                          BreedTextField(
                             controller: stockController,
                             label: 'Stock',
                             validationMessage: 'Please Enter Stock',
                           ),
-                          
-                      //       Padding(
-                      //       padding: const EdgeInsets.symmetric(
-                      //           vertical: 8.0, horizontal: 16.0),
-                      //       child: DropdownButtonFormField<int>(
-                      //         value: selectedMonth,
-                      //         items: arr
-                      //             .map((arr) => DropdownMenuItem<int>(
-                      //                   value: arr,
-                      //                   child: Text(arr.toString()),
-                      //                 ))
-                      //             .toList(),
-                      //         onChanged: (value) {
-                      //           selectedMonth = value!;
-                      //           // setState(() {
-                      //           //   selectedCategory = value!;
-                      //           // });
-                      //         },
-                      //         decoration: const InputDecoration(
-                      //           labelText: 'Month',
-                      //           border: OutlineInputBorder(),
-                      //         ),
-                      //         validator: (value){
-                      //           if(value==null){
-                      //             return 'Please select month';
-                      //           }
-                      //           return null;
-                      //         }
-                      //       ),
-                      //     ),
-                      //   // year session
-                      //      Padding(
-                      //       padding: const EdgeInsets.symmetric(
-                      //           vertical: 8.0, horizontal: 16.0),
-                      //       child: DropdownButtonFormField<int>(
-                      //         value: selectedYear,
-                      //         items: year
-                      //             .map((year) => DropdownMenuItem<int>(
-                      //                   value: year,
-                      //                   child: Text(year.toString()),
-                      //                 ))
-                      //             .toList(),
-                      //         onChanged: (value) {
-                      //           selectedYear = value!;
-                      //           // setState(() {
-                      //           //   selectedCategory = value!;
-                      //           // });
-                      //         },
-                      //         decoration: const InputDecoration(
-                      //           labelText: 'Year',
-                      //           border: OutlineInputBorder(),
-                      //         ),
-                      //         validator: (value){
-                      //           if(value==null){
-                      //             return 'Please select year';
-                      //           }
-                      //           return null;
-                      //         }
-                      //       ),
-                      //     ),
-
-                      //     /// gender session
-                          
-                      
-                      //  Padding(
-                      //       padding: const EdgeInsets.symmetric(
-                      //           vertical: 8.0, horizontal: 16.0),
-                      //       child: DropdownButtonFormField<String>(
-                      //         value: gender,
-                      //         items: genders
-                      //             .map((genders) => DropdownMenuItem<String>(
-                      //                   value: genders,
-                      //                   child: Text(genders),
-                      //                 ))
-                      //             .toList(),
-                      //         onChanged: (value) {
-                      //           gender = value!;
-                      //           // setState(() {
-                      //           //   selectedCategory = value!;
-                      //           // });
-                      //         },
-                      //         decoration: const InputDecoration(
-                      //           labelText: 'Gender',
-                      //           border: OutlineInputBorder(),
-                      //         ),
-                      //         validator: (value) =>
-                      //             value == null || value.isEmpty
-                      //                 ? 'Please select a gender'
-                      //                 : null,
-                      //       ),
-                      //     ),
-                    // added new code
+                          SizedBox(height: 15),
+                          Padding(
+                            padding: EdgeInsets.all(13),
+                            child: TextFormField(
+                              controller: dropdowngenderController,
+                              readOnly: true, // Prevents manual text input
+                              decoration: InputDecoration(
+                                labelText: 'Select an Option',
+                                suffixIcon: PopupMenuButton<String>(
+                                  icon: Icon(Icons.arrow_drop_down),
+                                  onSelected: (value) {
+                                    dropdowngenderController.text = value;
+                                  },
+                                  itemBuilder: (context) {
+                                    return gender.map((item) {
+                                      return PopupMenuItem(
+                                        value: item,
+                                        child: Text(item),
+                                      );
+                                    }).toList();
+                                  },
+                                ),
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select an option';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          Padding(
+                            padding: EdgeInsets.all(13),
+                            child: TextFormField(
+                              controller: monthController,
+                              readOnly: true,
+                              decoration: InputDecoration(
+                                labelText: 'Select a Month',
+                                suffixIcon: PopupMenuButton<int>(
+                                  icon: Icon(Icons.arrow_drop_down),
+                                  onSelected: (value) {
+                                    monthController.text = value.toString();
+                                  },
+                                  itemBuilder: (context) {
+                                    return month.map((item) {
+                                      return PopupMenuItem(
+                                        value: item, // Pass int as value
+                                        child: Text(item
+                                            .toString()), // Convert int to String for display
+                                      );
+                                    }).toList();
+                                  },
+                                ),
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select a month';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          Padding(
+                            padding: EdgeInsets.all(13),
+                            child: TextFormField(
+                              controller: yearController,
+                              readOnly: true, // Prevents manual text input
+                              decoration: InputDecoration(
+                                labelText: 'Select a year',
+                                suffixIcon: PopupMenuButton<int>(
+                                  icon: Icon(Icons.arrow_drop_down),
+                                  onSelected: (value) {
+                                    yearController.text = value.toString();
+                                  },
+                                  itemBuilder: (context) {
+                                    return year.map((item) {
+                                      return PopupMenuItem(
+                                        value: item, // Pass int as value
+                                        child: Text(item
+                                            .toString()), // Convert int to String for display
+                                      );
+                                    }).toList();
+                                  },
+                                ),
+                                border: OutlineInputBorder(),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select a month';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -357,8 +338,7 @@ class _PetBreedState extends State<PetBreed> {
                   ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        final breedimage =
-                            context.read<BreedimageblocBloc>();
+                        final breedimage = context.read<BreedimageblocBloc>();
                         final imageState = breedimage.state;
 
                         List<String> imageUrls = [];
@@ -383,37 +363,32 @@ class _PetBreedState extends State<PetBreed> {
                             .get();
 
                         final breedModel = BreedModel(
-                            id: DateTime.now()
-                                .millisecondsSinceEpoch
-                                .toString(), // Replace with a unique ID if needed
-                            name: nameController.text,
-                            categoryDetails: {
-                              'id': categoryId,
-                              'name': categorySnapshot.data()?['name'],
-                            },
-                            categoryId: categoryId ?? '',
-                            // description: descriptionController.text,
-                            descriptions: [descriptionController.text],
-                            size: sizeController.text,
-                            careRequirements: careController.text,
-                            price: double.tryParse(priceController.text) ?? 0,
-                            // priceRange: priceController.text,
-                            imageUrls: imageUrls,
-                            // month: selectedMonth ?? 0,
-
-                            // year: selectedYear ?? 0,
-                            gender: genderController.text,
-                            age: int.tryParse(ageController.text)??0,
-                            stock: int.tryParse(stockController.text)??0,
-                            
-                            // age: int.tryParse(monthController.text) ??0,
-
-                            // Update to include image URLs when saving to Firebase
-                            );
+                          id: DateTime.now()
+                              .millisecondsSinceEpoch
+                              .toString(), // Replace with a unique ID if needed
+                          name: nameController.text,
+                          categoryDetails: {
+                            'id': categoryId,
+                            'name': categorySnapshot.data()?['name'],
+                          },
+                          categoryId: categoryId ?? '',
+                          // description: descriptionController.text,
+                          descriptions: [descriptionController.text],
+                          size: sizeController.text,
+                          careRequirements: careController.text,
+                          price: double.tryParse(priceController.text) ?? 0,
+                          // priceRange: priceController.text,
+                          imageUrls: imageUrls,
+                          gender: dropdowngenderController.text,
+                          month: int.tryParse(monthController.text) ?? 0,
+                          year: int.tryParse(yearController.text) ?? 0,
+                          stock: int.tryParse(stockController.text) ?? 0,
+                          // Update to include image URLs when saving to Firebase
+                        );
                         context
                             .read<BreedBloc>()
                             .add(AddBreedEvent(breedModel));
-                              // Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductView()));
+                        // Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductView()));
                         breedimage.add(ClearImagesEvent());
                         // Handle form submission
                       }

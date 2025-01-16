@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors_in_immutables, library_private_types_in_public_api
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:petspot_admin_side/presentation/screens/category_view.dart';
@@ -128,73 +129,91 @@ class _AdminDashboardState extends State<AdminDashboard> {
           ],
         ),
       ),
-      body: Padding(
-        padding:const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-          const  Text(
-              'Revenue Overview',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            
-          const  SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildViewButton('Today'),
-                _buildViewButton('Weekly'),
-                _buildViewButton('Monthly'),
-              ],
-            ),
-        const    SizedBox(height: 16),
-            SizedBox(
-              height: 200,
-              child: LineChart(
-                LineChartData(
-                  gridData:const FlGridData(show: true),
-                  titlesData:const FlTitlesData(show: true),
-                  borderData: FlBorderData(
-                    show: true,
-                    border: Border.all(color: Colors.black, width: 1),
-                  ),
-                  minX: 0,
-                  maxX: selectedView == 'Monthly' ? 30 : 6,
-                  minY: 0,
-                  maxY: 8,
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: getChartData(),
-                      isCurved: true,
-                      barWidth: 3,
-                      // colors: [Colors.teal],
-                      belowBarData: BarAreaData(
-                        show: true,
-                        // colors: [Colors.teal.withOpacity(0.3)],
-                      ),
+      body: StreamBuilder(
+  stream: FirebaseFirestore.instance.collection('users').snapshots(),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (snapshot.hasError) {
+      return const Center(child: Text('Error loading data'));
+    }
+
+    final userCount = snapshot.data?.docs.length ?? 0;
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            'Revenue Overview',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildViewButton('Today'),
+              _buildViewButton('Weekly'),
+              _buildViewButton('Monthly'),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 200,
+            child: LineChart(
+              LineChartData(
+                gridData: const FlGridData(show: true),
+                titlesData: const FlTitlesData(show: true),
+                borderData: FlBorderData(
+                  show: true,
+                  border: Border.all(color: Colors.black, width: 1),
+                ),
+                minX: 0,
+                maxX: selectedView == 'Monthly' ? 30 : 6,
+                minY: 0,
+                maxY: 8,
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: getChartData(),
+                    isCurved: true,
+                    barWidth: 3,
+                    belowBarData: BarAreaData(
+                      show: true,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-         const   SizedBox(height: 16),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 1.2,
-                ),
-                itemCount: cardTitles.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return _card(index);
-                },
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 1.2,
               ),
+              itemCount: cardTitles.length,
+              itemBuilder: (BuildContext context, int index) {
+                 String countDisplay = '';
+                  if (index == 2) {
+                  countDisplay = '$userCount'; // Total Users
+                } else {
+                  countDisplay = ''; // Placeholder for other cards
+                }
+                return _card(cardTitles[index],countDisplay);
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+    );
+  },
+),
+
     );
   }
 
@@ -222,19 +241,52 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
-  Widget _card(int index) {
+  // Widget _card(int index) {
+  //   return Card(
+  //     elevation: 2,
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.circular(9),
+  //     ),
+  //     child: Padding(
+  //       padding:const EdgeInsets.all(16.0),
+  //       child: Center(
+  //         child: Text(
+  //           cardTitles[index],
+  //           style:const TextStyle(fontSize: 18),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  Widget _card(String title, String count) {
     return Card(
-      elevation: 2,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(9),
+        borderRadius: BorderRadius.circular(12),
       ),
+      elevation: 4,
       child: Padding(
-        padding:const EdgeInsets.all(16.0),
-        child: Center(
-          child: Text(
-            cardTitles[index],
-            style:const TextStyle(fontSize: 18),
-          ),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              count,
+              style: const TextStyle(
+                fontSize: 24,
+                color: Colors.teal,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );

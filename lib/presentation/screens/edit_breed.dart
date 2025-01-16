@@ -17,8 +17,9 @@ class EditBreed extends StatefulWidget {
 }
 
 class _EditBreedState extends State<EditBreed> {
-
-
+  final List<String> gender = ['Male', 'Female'];
+  final List<int> month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  final List<int> year = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   @override
   Widget build(BuildContext context) {
@@ -32,35 +33,14 @@ class _EditBreedState extends State<EditBreed> {
         TextEditingController(text: widget.petbreed.careRequirements);
     final priceController =
         TextEditingController(text: widget.petbreed.price.toString());
-
-    final ageController =
-        TextEditingController(text: widget.petbreed.age.toString());
-    final genderController =
+    final stockController =
+        TextEditingController(text: widget.petbreed.stock.toString());
+    final dropdowngenderController =
         TextEditingController(text: widget.petbreed.gender);
-           final stockController=TextEditingController(text: widget.petbreed.stock.toString());
-
-    // int?selectedMonth;
-    // int?selectedYear;
-
-    // List<int>arr=[
-    //  1,2,3,4,5,6,7,8,9,10,11,12
-
-    // ];
-
-    // List<int>year=[
-    //  1,2,3,4,5,6,7,8,9,10,11,12
-
-    // ];
-
-    //   String?gender;
-
-    // List<String>genders=[
-    //   'Male',
-    //   'Female'
-    // ];
-
-    // final ageController=TextEditingController(text: widget.petbreed.age.toString());
-
+    final monthController =
+        TextEditingController(text: widget.petbreed.month.toString());
+    final yearController =
+        TextEditingController(text: widget.petbreed.year.toString());
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -76,48 +56,97 @@ class _EditBreedState extends State<EditBreed> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-             GestureDetector(
-                  onTap: () => context.read<EditimageBloc>().add(EditimagePicker()),
-                  child: BlocBuilder<EditimageBloc, EditimageState>(
-                    builder: (context, state) {
-                      if (state is EditImageSuccess) {
-                        return GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3, // Number of images per row
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 10,
-                              ),
-                              itemCount: state.images.length,
-                              itemBuilder: (context, index) {
-                                return ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.file(
-                                    state.images[index],
-                                    fit: BoxFit.cover,
-                                  ),
-                                );
-                              },
-                            );
-                          } else if (state is EditImageFailure) {
-                            return Text(
-                              state.errormessage,
-                              style: const TextStyle(color: Colors.red),
-                            );
-                          } else {
-                            return Icon(Icons.camera_alt,size: 70,);
-                            // return const CircleAvatar(
-                            //   radius: 60,
-                            //   backgroundImage: NetworkImage(
-                            //     'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/461fed23287735.599f500689d80.jpg',
-                            //   ),
-                            //   backgroundColor: Colors.grey,
-                            // );
-                          }
-                    }
+            GestureDetector(
+  onTap: () => context.read<EditimageBloc>().add(EditimagePicker()),
+  child: BlocBuilder<EditimageBloc, EditimageState>(
+    builder: (context, state) {
+      if (state is EditImageSuccess) {
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+          itemCount: state.images.length,
+          itemBuilder: (context, index) {
+            return Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.file(
+                    state.images[index],
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
                   ),
                 ),
+                Positioned(
+                  top: 5,
+                  right: 5,
+                  child: GestureDetector(
+                    onTap: () => context
+                        .read<EditimageBloc>()
+                        .add(RemoveImageEvent(index)),
+                    child: const CircleAvatar(
+                      radius: 12,
+                      backgroundColor: Colors.red,
+                      child: Icon(
+                        Icons.close,
+                        size: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      } else if (state is EditImageFailure) {
+        return Text(
+          state.errormessage,
+          style: const TextStyle(color: Colors.red),
+        );
+      } else if (state is EditimageInitial && widget.petbreed.imageUrls.isNotEmpty) {
+  
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+          itemCount: widget.petbreed.imageUrls.length,
+          itemBuilder: (context, index) {
+            return Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    widget.petbreed.imageUrls[index],
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        return const Icon(
+          Icons.camera_alt,
+          size: 70,
+          color: Colors.grey,
+        );
+      }
+    },
+  ),
+),
+
               const SizedBox(height: 20),
               TextField(
                 controller: nameController,
@@ -168,152 +197,132 @@ class _EditBreedState extends State<EditBreed> {
               ),
               const SizedBox(height: 16),
               TextField(
-                controller: ageController,
-                decoration: const InputDecoration(
-                  labelText: 'Age',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: genderController,
-                decoration: const InputDecoration(
-                  labelText: 'Gender',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-               const SizedBox(height: 16),
-               TextField(
                 controller: stockController,
                 decoration: const InputDecoration(
                   labelText: 'Stock',
                   border: OutlineInputBorder(),
                 ),
               ),
-
-              //       Padding(
-              //       padding: const EdgeInsets.symmetric(
-              //           vertical: 8.0, horizontal: 16.0),
-              //       child: DropdownButtonFormField<int>(
-              //         value: selectedMonth,
-              //         items: arr
-              //             .map((arr) => DropdownMenuItem<int>(
-              //                   value: arr,
-              //                   child: Text(arr.toString()),
-              //                 ))
-              //             .toList(),
-              //         onChanged: (value) {
-              //           selectedMonth = value!;
-              //           // setState(() {
-              //           //   selectedCategory = value!;
-              //           // });
-              //         },
-              //         decoration: const InputDecoration(
-              //           labelText: 'Month',
-              //           border: OutlineInputBorder(),
-              //         ),
-              //         validator: (value){
-              //           if(value==null){
-              //             return 'Please select month';
-              //           }
-              //           return null;
-              //         }
-              //       ),
-              //     ),
-              //   // year session
-              //      Padding(
-              //       padding: const EdgeInsets.symmetric(
-              //           vertical: 8.0, horizontal: 16.0),
-              //       child: DropdownButtonFormField<int>(
-              //         value: selectedYear,
-              //         items: year
-              //             .map((year) => DropdownMenuItem<int>(
-              //                   value: year,
-              //                   child: Text(year.toString()),
-              //                 ))
-              //             .toList(),
-              //         onChanged: (value) {
-              //           selectedYear = value!;
-              //           // setState(() {
-              //           //   selectedCategory = value!;
-              //           // });
-              //         },
-              //         decoration: const InputDecoration(
-              //           labelText: 'Year',
-              //           border: OutlineInputBorder(),
-              //         ),
-              //         validator: (value){
-              //           if(value==null){
-              //             return 'Please select year';
-              //           }
-              //           return null;
-              //         }
-              //       ),
-              //     ),
-
-              //     /// gender session
-
-              //  Padding(
-              //       padding: const EdgeInsets.symmetric(
-              //           vertical: 8.0, horizontal: 16.0),
-              //       child: DropdownButtonFormField<String>(
-              //         value: gender,
-              //         items: genders
-              //             .map((genders) => DropdownMenuItem<String>(
-              //                   value: genders,
-              //                   child: Text(genders),
-              //                 ))
-              //             .toList(),
-              //         onChanged: (value) {
-              //           gender = value!;
-              //           // setState(() {
-              //           //   selectedCategory = value!;
-              //           // });
-              //         },
-              //         decoration: const InputDecoration(
-              //           labelText: 'Gender',
-              //           border: OutlineInputBorder(),
-              //         ),
-              //         validator: (value) =>
-              //             value == null || value.isEmpty
-              //                 ? 'Please select a gender'
-              //                 : null,
-              //       ),
-              //     ),
-
+              SizedBox(height: 15),
+              TextFormField(
+                controller: dropdowngenderController,
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: 'Select an Option',
+                  suffixIcon: PopupMenuButton<String>(
+                    icon: Icon(Icons.arrow_drop_down),
+                    onSelected: (value) {
+                      dropdowngenderController.text = value;
+                    },
+                    itemBuilder: (context) {
+                      return gender.map((item) {
+                        return PopupMenuItem(
+                          value: item,
+                          child: Text(item),
+                        );
+                      }).toList();
+                    },
+                  ),
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select an option';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 15),
+              TextFormField(
+                controller: monthController,
+                readOnly: true, 
+                decoration: InputDecoration(
+                  labelText: 'Select a Month',
+                  suffixIcon: PopupMenuButton<int>(
+                    icon: Icon(Icons.arrow_drop_down),
+                    onSelected: (value) {
+               
+                      monthController.text = value.toString();
+                    },
+                    itemBuilder: (context) {
+                      return month.map((item) {
+                        return PopupMenuItem(
+                          value: item, 
+                          child: Text(item
+                              .toString()), 
+                        );
+                      }).toList();
+                    },
+                  ),
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select a month';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 15),
+              TextFormField(
+                controller: yearController,
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: 'Select a year',
+                  suffixIcon: PopupMenuButton<int>(
+                    icon: Icon(Icons.arrow_drop_down),
+                    onSelected: (value) {
+                    
+                      yearController.text = value.toString();
+                    },
+                    itemBuilder: (context) {
+                      return year.map((item) {
+                        return PopupMenuItem(
+                          value: item,
+                          child: Text(item
+                              .toString()), 
+                        );
+                      }).toList();
+                    },
+                  ),
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select a month';
+                  }
+                  return null;
+                },
+              ),
               SizedBox(height: 16),
               ElevatedButton(
                   onPressed: () async {
-                  
-                      final breedimage =
-                            context.read<EditimageBloc>();
-                        final imageState = breedimage.state;
+                    final breedimage = context.read<EditimageBloc>();
+                    final imageState = breedimage.state;
 
-                        List<String> imageUrls = [];
+                    List<String> imageUrls = [];
 
-                        if (imageState is EditImageSuccess) {
-                          // Loop through each selected image and upload it to Cloudinary
-                          for (var image in imageState.images) {
-                            final imageUrl =
-                                await CloudinaryService.uploadImage(image);
-                            if (imageUrl != null) {
-                              imageUrls.add(imageUrl);
-                            }
-                          }
+                    if (imageState is EditImageSuccess) {
+                      for (var image in imageState.images) {
+                        final imageUrl =
+                            await CloudinaryService.uploadImage(image);
+                        if (imageUrl != null) {
+                          imageUrls.add(imageUrl);
                         }
-
+                      }
+                    }
 
                     if (nameController.text.isEmpty ||
                         categoryController.text.isEmpty ||
                         descriptionController.text.isEmpty ||
                         sizeController.text.isEmpty ||
                         priceController.text.isEmpty ||
-                        genderController.text.isEmpty ||
-                        ageController.text.isEmpty ||
-                        stockController.text.isEmpty
-                        ) {
+                        dropdowngenderController.text.isEmpty ||
+                        monthController.text.isEmpty ||
+                        yearController.text.isEmpty ||
+                        stockController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text('Please enter all fields')));
+                      content: Text('Please enter all fields')));
                       return;
                     }
 
@@ -326,22 +335,20 @@ class _EditBreedState extends State<EditBreed> {
                           .split(', ')
                           .map((e) => e.trim())
                           .toList(),
-                     
+
                       size: sizeController.text,
                       careRequirements: careController.text,
                       price: double.tryParse(priceController.text) ?? 0,
-                      gender: genderController.text,
-                      age: int.tryParse(ageController.text)??0,
-                      stock: int.tryParse(stockController.text)??0,
-                    
-                      // month: int.tryParse(monthController.text) ?? 0,
-                      // month: selectedMonth??0,
-                      // year: selectedYear??0,
-                      // gender:gender??''
+                      gender: dropdowngenderController.text,
+                      month: int.tryParse(monthController.text) ?? 0,
+                      year: int.tryParse(yearController.text) ?? 0,
+                      // age: int.tryParse(ageController.text)??0,
+                      stock: int.tryParse(stockController.text) ?? 0,
                     );
                     context
                         .read<BreedBloc>()
                         .add(UpdateBreedEvent(updateBreed));
+                         breedimage.add(ClearImagesEvent());
 
                     Navigator.pop(context);
 

@@ -46,7 +46,7 @@ class FoodProductModel {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       'id': id,
       'foodname': foodname,
