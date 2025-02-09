@@ -31,7 +31,7 @@ class ProductView extends StatelessWidget {
             mainAxisSpacing: 16, // Space between rows
             childAspectRatio: 1.5, // Aspect ratio for each button (adjust as needed)
           ),
-          itemCount: 8, // Number of items in the grid
+          itemCount: 9, // Number of items in the grid
           itemBuilder: (context, index) {
             switch (index) {
               case 0:
@@ -106,6 +106,8 @@ class ProductView extends StatelessWidget {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const BreedDetail()));
                   },
                 );
+                
+                
               default:
                 return const SizedBox.shrink();
             }
