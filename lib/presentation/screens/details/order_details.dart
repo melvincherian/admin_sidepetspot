@@ -75,7 +75,10 @@ class _OrderDetailState extends State<OrderDetail> {
         await _fetchOrderStatus();
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Order status updated to $status')),
+          SnackBar(
+            content: Text('Order status updated to $status'),
+            backgroundColor: Colors.green,
+          ),
         );
       } catch (e) {
         print("Error updating order status: $e");
@@ -261,8 +264,8 @@ class _OrderDetailState extends State<OrderDetail> {
                 if (newStatus != null) {
                   setState(() {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      backgroundColor: Colors.green,
-                      content: (Text('Order status  Updated successfully'))));
+                        backgroundColor: Colors.green,
+                        content: (Text('Order status  Updated successfully'))));
                     _selectedStatus = newStatus;
                   });
                   _updateOrderStatus(newStatus);

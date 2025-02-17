@@ -17,16 +17,12 @@ class AdminDashboard extends StatefulWidget {
 }
 
 class _AdminDashboardState extends State<AdminDashboard> {
-
-
   final List<String> cardTitles = [
     'Total Products',
     'Total Orders',
     'Total Users',
     'Revenue',
   ];
-
-   
 
   String selectedView = 'Today';
 
@@ -69,8 +65,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:const Text('Dashboard',
-        style: TextStyle(fontWeight: FontWeight.bold),
+        title: const Text(
+          'Dashboard',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -78,7 +75,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-         const   DrawerHeader(
+            const DrawerHeader(
               decoration: BoxDecoration(color: Colors.teal),
               child: Text(
                 'Admin menu',
@@ -86,157 +83,172 @@ class _AdminDashboardState extends State<AdminDashboard> {
               ),
             ),
             ListTile(
-              leading:const Icon(Icons.dashboard),
+              leading: const Icon(Icons.dashboard),
               title: const Text('Dashboard'),
               onTap: () {},
             ),
             ListTile(
-              leading:const Icon(Icons.person),
+              leading: const Icon(Icons.person),
               title: const Text('User Management'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>UserList()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => UserList()));
               },
             ),
-            
+
+            // ListTile(
+            //   leading:const Icon(Icons.chat_rounded),
+            //   title: const Text('Sales Report'),
+            //   onTap: () {},
+            // ),
             ListTile(
-              leading:const Icon(Icons.chat_rounded),
-              title: const Text('Sales Report'),
-              onTap: () {},
-            ),
-            ListTile(
-              leading:const Icon(Icons.shop),
+              leading: const Icon(Icons.shop),
               title: const Text('Product Management'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const ProductView()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProductView()));
               },
             ),
             ListTile(
-              leading:const Icon(Icons.category),
+              leading: const Icon(Icons.category),
               title: const Text('Category Management'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const CategoryView()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CategoryView()));
               },
             ),
-            //   ListTile(
-            //   leading:const Icon(Icons.offline_bolt_rounded),
-            //   title: const Text('Special Offer'),
-            //   onTap: () {
-            //     Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserCarrousel()));
-            //   },
-            // ),
-             ListTile(
-              leading:const Icon(Icons.local_shipping),
+            ListTile(
+              leading: const Icon(Icons.local_shipping),
               title: const Text('Order management'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyOrders()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const MyOrders()));
               },
             ),
-          
-            
           ],
         ),
       ),
       body: StreamBuilder(
-  stream: FirebaseFirestore.instance.collection('users').snapshots(),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    if (snapshot.hasError) {
-      return const Center(child: Text('Error loading data'));
-    }
+        stream: FirebaseFirestore.instance.collection('payment').snapshots(),
+        builder: (context, orderSnapshot) {
+          if (orderSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (orderSnapshot.hasError) {
+            return const Center(child: Text('Error loading data'));
+          }
 
-    final userCount = snapshot.data?.docs.length ?? 0;
+          final orderCount = orderSnapshot.data?.docs.length ?? 0;
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text(
-            'Revenue Overview',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildViewButton('Today'),
-              _buildViewButton('Weekly'),
-              _buildViewButton('Monthly'),
-            ],
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 200,
-            child: LineChart(
-              LineChartData(
-                gridData: const FlGridData(show: true),
-                titlesData: const FlTitlesData(show: true),
-                borderData: FlBorderData(
-                  show: true,
-                  border: Border.all(color: Colors.black, width: 1),
-                ),
-                minX: 0,
-                maxX: selectedView == 'Monthly' ? 30 : 6,
-                minY: 0,
-                maxY: 8,
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: getChartData(),
-                    isCurved: true,
-                    barWidth: 3,
-                    belowBarData: BarAreaData(
-                      show: true,
+          return StreamBuilder(
+            stream: FirebaseFirestore.instance.collection('users').snapshots(),
+            builder: (context, userSnapshot) {
+              if (userSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (userSnapshot.hasError) {
+                return const Center(child: Text('Error loading data'));
+              }
+
+              final userCount = userSnapshot.data?.docs.length ?? 0;
+
+              return Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      'Revenue Overview',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                childAspectRatio: 1.2,
-              ),
-              itemCount: cardTitles.length,
-              itemBuilder: (BuildContext context, int index) {
-                 String countDisplay = '';
-                  if (index == 2) {
-                  countDisplay = '$userCount'; // Total Users
-                } else {
-                  countDisplay = ''; // Placeholder for other cards
-                }
-                return _card(cardTitles[index],countDisplay);
-              },
-            ),
-          ),
-        ],
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildViewButton('Today'),
+                        _buildViewButton('Weekly'),
+                        _buildViewButton('Monthly'),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      height: 200,
+                      child: LineChart(
+                        LineChartData(
+                          gridData: const FlGridData(show: true),
+                          titlesData: const FlTitlesData(show: true),
+                          borderData: FlBorderData(
+                            show: true,
+                            border: Border.all(color: Colors.black, width: 1),
+                          ),
+                          minX: 0,
+                          maxX: selectedView == 'Monthly' ? 30 : 6,
+                          minY: 0,
+                          maxY: 8,
+                          lineBarsData: [
+                            LineChartBarData(
+                              spots: getChartData(),
+                              isCurved: true,
+                              barWidth: 3,
+                              belowBarData: BarAreaData(
+                                show: true,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Expanded(
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 1.2,
+                        ),
+                        itemCount: cardTitles.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          String countDisplay = '';
+                          if (index == 1) {
+                            countDisplay = '$orderCount';
+                          } else if (index == 2) {
+                            countDisplay = '$userCount';
+                          } else {
+                            countDisplay = '';
+                          }
+                          return _card(cardTitles[index], countDisplay);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       ),
-    );
-  },
-),
-
     );
   }
 
-  // Button widget for selecting view
   Widget _buildViewButton(String view) {
     return Padding(
-      padding:const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: ElevatedButton(
         onPressed: () {
-        
           setState(() {
             selectedView = view;
           });
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: selectedView == view ? Colors.teal : Colors.grey[300],
+          backgroundColor:
+              selectedView == view ? Colors.teal : Colors.grey[300],
         ),
         child: Text(
           view,
