@@ -13,6 +13,8 @@ class ProductView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -23,13 +25,16 @@ class ProductView extends StatelessWidget {
         elevation: 2,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        padding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.04,
+          vertical: screenHeight * 0.02,
+        ),
         child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // Two columns for a balanced layout
-            crossAxisSpacing: 16, // Space between columns
-            mainAxisSpacing: 16, // Space between rows
-            childAspectRatio: 1.5, // Aspect ratio for each button (adjust as needed)
+           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: screenWidth > 600 ? 3 : 2, // Adjust for tablet & mobile
+            crossAxisSpacing: screenWidth * 0.04,
+            mainAxisSpacing: screenHeight * 0.02,
+            childAspectRatio: screenWidth / (screenHeight / 1.8),
           ),
           itemCount: 9, // Number of items in the grid
           itemBuilder: (context, index) {

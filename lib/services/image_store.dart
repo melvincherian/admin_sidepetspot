@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 class CloudinaryService {
   static const String cloudName = 'do9dkxsc0';
-  static const String uploadPreset = 'qxl49pfm'; // Optional, if configured in Cloudinary
+  static const String uploadPreset = 'qxl49pfm';
   static const String apiKey = '716346215499246';
   static const String apiSecret = '-SKpyiXJuNtwqxvOidQf7eLAvms';
 

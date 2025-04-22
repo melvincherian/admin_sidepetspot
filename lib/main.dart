@@ -20,20 +20,23 @@ import 'package:petspot_admin_side/firebase/add_pet_pro.dart';
 import 'package:petspot_admin_side/firebase/breed_session.dart';
 import 'package:petspot_admin_side/firebase/category.dart'; // Your CategoryRepository
 import 'package:petspot_admin_side/firebase/food_product_model.dart';
+import 'package:petspot_admin_side/firebase_options.dart';
 import 'package:petspot_admin_side/presentation/screens/admin_login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
- 
+
   @override
   Widget build(BuildContext context) {
-   
     final categoryRepository = CategoryRepository();
 
     return MultiBlocProvider(
@@ -49,26 +52,19 @@ class MyApp extends StatelessWidget {
               AddpetproductBloc(productRepository: ProductRepository()),
         ),
         BlocProvider(
-            create: (context) => FoodproductBloc(repository: Foodrepository())
-        ),
+            create: (context) => FoodproductBloc(repository: Foodrepository())),
         BlocProvider(
-          create: (context)=>AccessoriesBloc(accessoryRepository: AccessoryRepository())
-        ),
-         BlocProvider(
-          create: (context)=>BreedBloc(BreedRepository())
-        ),
-         BlocProvider(
-          create: (context)=>MultipleimageBloc()
-        ),
-        BlocProvider(create: (context)=>AccesoryimageBloc()),
-        BlocProvider(create: (context)=>BreedimageblocBloc()),
-        BlocProvider(create: (context)=>FoodimageBloc()),
-        BlocProvider(create: (context)=>EditimageBloc()),
-        BlocProvider(create: (context)=>EditaccesoryimageBloc()),
-        BlocProvider(create: (context)=>FoodeditimageBloc()),
-        BlocProvider(create: (context)=>PeteditimageBloc()),
-       
-
+            create: (context) =>
+                AccessoriesBloc(accessoryRepository: AccessoryRepository())),
+        BlocProvider(create: (context) => BreedBloc(BreedRepository())),
+        BlocProvider(create: (context) => MultipleimageBloc()),
+        BlocProvider(create: (context) => AccesoryimageBloc()),
+        BlocProvider(create: (context) => BreedimageblocBloc()),
+        BlocProvider(create: (context) => FoodimageBloc()),
+        BlocProvider(create: (context) => EditimageBloc()),
+        BlocProvider(create: (context) => EditaccesoryimageBloc()),
+        BlocProvider(create: (context) => FoodeditimageBloc()),
+        BlocProvider(create: (context) => PeteditimageBloc()),
       ],
       child: MaterialApp(
         title: 'Admin Side',

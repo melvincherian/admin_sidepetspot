@@ -63,6 +63,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final isLargeScreen = size.width > 600;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -75,12 +77,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            const DrawerHeader(
+            DrawerHeader(
               decoration: BoxDecoration(color: Colors.teal),
-              child: Text(
-                'Admin menu',
-                style: TextStyle(color: Colors.white, fontSize: 24),
-              ),
+              child: Text('Admin menu',
+                  style: TextStyle(
+                      color: Colors.white, fontSize: isLargeScreen ? 28 : 24)),
             ),
             ListTile(
               leading: const Icon(Icons.dashboard),
@@ -157,27 +158,26 @@ class _AdminDashboardState extends State<AdminDashboard> {
               final userCount = userSnapshot.data?.docs.length ?? 0;
 
               return Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(size.width * 0.04),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text(
+                    Text(
                       'Revenue Overview',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: isLargeScreen ? 24 : 20,
+                          fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildViewButton('Today'),
-                        _buildViewButton('Weekly'),
-                        _buildViewButton('Monthly'),
-                      ],
+                     children: ['Today', 'Weekly', 'Monthly']
+                  .map((view) => _buildViewButton(view, size))
+                  .toList(),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: size.height * 0.02),
                     SizedBox(
-                      height: 200,
+                      height: size.height * 0.25,
                       child: LineChart(
                         LineChartData(
                           gridData: const FlGridData(show: true),
@@ -203,14 +203,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: size.height * 0.02),
                     Expanded(
                       child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: isLargeScreen ? 4 : 2,
+                          mainAxisSpacing: size.height * 0.02,
+                          crossAxisSpacing: size.width * 0.02,
                           childAspectRatio: 1.2,
                         ),
                         itemCount: cardTitles.length,
@@ -237,9 +236,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
-  Widget _buildViewButton(String view) {
+  Widget _buildViewButton(String view,Size size) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
       child: ElevatedButton(
         onPressed: () {
           setState(() {

@@ -136,13 +136,6 @@ class _EditFoodState extends State<EditFood> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              // TextField(
-              //   controller: categoryController,
-              //   decoration: const InputDecoration(
-              //     labelText: 'Category',
-              //     border: OutlineInputBorder(),
-              //   ),
-              // ),
               const SizedBox(height: 16),
               TextField(
                 controller: descriptionController,

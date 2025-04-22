@@ -1,1 +1,37 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"pet-app-second-project","appId":"1:958659977974:android:8720e99118784b0ef642d7","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"pet-app-second-project","configurations":{"android":"1:958659977974:android:8720e99118784b0ef642d7","web":"1:958659977974:web:e5f351c300aeed4ff642d7","windows":"1:958659977974:web:623fa4a0079e8e78f642d7"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "pet-app-second-project",
+          "appId": "1:958659977974:android:8720e99118784b0ef642d7",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "pet-app-second-project",
+          "configurations": {
+            "android": "1:958659977974:android:8720e99118784b0ef642d7",
+            "web": "1:958659977974:web:e5f351c300aeed4ff642d7",
+            "windows": "1:958659977974:web:623fa4a0079e8e78f642d7"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
